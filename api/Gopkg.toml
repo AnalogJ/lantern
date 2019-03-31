@@ -1,0 +1,18 @@
+required = [
+    "github.com/gorilla/websocket",
+    "github.com/chromedp/cdproto",
+    "github.com/lib/pq",
+    "github.com/jinzhu/gorm",
+    "github.com/mitchellh/mapstructure",
+    "github.com/cskr/pubsub",
+
+    # test dependencies
+    "github.com/stretchr/testify/require",
+    "github.com/stretchr/testify/suite",
+    "github.com/stretchr/testify",
+]
+
+
+[prune]
+  go-tests = true
+  unused-packages = true

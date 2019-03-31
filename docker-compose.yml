@@ -1,0 +1,50 @@
+version: '2.1'
+
+services:
+  web:
+    build: ./web
+    ports:
+    - "8080:8080"
+#    depends_on:
+#      api:
+#        condition: service_healthy
+
+  api:
+    build:
+      context: .
+      dockerfile: ./api/Dockerfile
+    ports:
+    - "9000:9000"
+    depends_on:
+      database:
+        condition: service_healthy
+
+  proxy:
+    build:
+      context: .
+      dockerfile: ./proxy/Dockerfile
+    ports:
+    - "8080:8080"
+    command: 'lantern_httpdump'
+#    depends_on:
+#      database:
+#        condition: service_healthy
+
+
+  database:
+    image: healthcheck/postgres
+    environment:
+      POSTGRES_DB: lantern
+      POSTGRES_PASSWORD: lantern-password
+      POSTGRES_USER: lantern
+    volumes:
+#      - db:/var/lib/postgresql/data
+      - ./database/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+
+  admin-database:
+    image: adminer
+    ports:
+    - "5050:8080"
+    depends_on:
+      database:
+        condition: service_healthy

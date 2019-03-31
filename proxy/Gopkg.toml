@@ -1,0 +1,16 @@
+required = [
+    "github.com/gorilla/websocket",
+    "github.com/lib/pq",
+    "github.com/jinzhu/gorm",
+    "github.com/elazarl/goproxy",
+
+    # test dependencies
+    "github.com/stretchr/testify/require",
+    "github.com/stretchr/testify/suite",
+    "github.com/stretchr/testify",
+]
+
+
+[prune]
+  go-tests = true
+  unused-packages = true
