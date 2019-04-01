@@ -1,3 +1,11 @@
+<p align="center">
+  <a href="https://github.com/AnalogJ/lantern">
+  <img width="300" alt="lexicon_view" src="https://github.com/AnalogJ/lantern/blob/master/logo.svg">
+  </a>
+</p>
+
+
+
 # lantern
 Peer into your requests.
 
@@ -46,3 +54,8 @@ Peer into your requests.
 - https://github.com/go-httpproxy/httpproxy
 - http://speakmy.name/2014/07/29/http-request-debugging-in-go/
 - https://github.com/roglew/pappy-proxy/tree/master/pappyproxy/interface/repeater
+
+
+# References
+
+- Logo: [Lantern by zidney](https://thenounproject.com/zidney0721/uploads/?i=1500728)
