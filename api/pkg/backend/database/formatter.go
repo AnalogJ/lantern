@@ -62,7 +62,7 @@ func processDatabaseEvent(dbType string, dbEvent map[string]interface{}) (cdprot
 				URL:              request.Url, // Request URL (without fragment).
 				//URLFragment      string                    `json:"urlFragment,omitempty"`      // Fragment of the requested URL starting with hash, if present.
 				Method: request.Method, // HTTP request method.
-				Headers: request.Headers, // HTTP request headers.
+				Headers: network.Headers(request.Headers), // HTTP request headers.
 				PostData: request.Body, // HTTP POST request data.
 				HasPostData: len(request.Body) > 0, // True when the request has POST data. Note that postData might still be omitted when this flag is true when the data is too long.
 				//MixedContentType security.MixedContentType `json:"mixedContentType,omitempty"` // The mixed content type of the request.
@@ -124,7 +124,7 @@ func processDatabaseEvent(dbType string, dbEvent map[string]interface{}) (cdprot
 				//URL: response.           `json:"url"`                          // Response URL. This URL can be different from CachedResource.url in case of redirect.
 				Status: int64(response.StatusCode), // HTTP response status code.
 				StatusText: response.Status, // HTTP response status text.
-				Headers: response.Headers, // HTTP response headers.
+				Headers: network.Headers(response.Headers), // HTTP response headers.
 				MimeType: response.MimeType,  // Resource mimeType as determined by the browser.
 				//RequestHeaders     Headers          `json:"requestHeaders,omitempty"`     // Refined HTTP request headers that were actually transmitted over the network.
 				//RequestHeadersText string           `json:"requestHeadersText,omitempty"` // HTTP request headers text.

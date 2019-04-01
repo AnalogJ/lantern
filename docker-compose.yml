@@ -25,7 +25,7 @@ services:
       dockerfile: ./proxy/Dockerfile
     ports:
     - "8082:9000"
-    command: 'lantern_generator' # lantern_proxy default
+#    command: 'lantern_generator' # lantern_proxy default
     depends_on:
       database:
         condition: service_healthy

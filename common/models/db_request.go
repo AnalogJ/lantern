@@ -17,6 +17,6 @@ type DbRequest struct {
 	CreatedAt     time.Time              `gorm:"NOT NULL" mapstructure:"created_at"`
 }
 
-func (DbRequest) TableName() string {
+func (db DbRequest) TableName() string {
 	return "requests"
 }
