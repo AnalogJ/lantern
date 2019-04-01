@@ -16,9 +16,14 @@ Peer into your requests.
 - [ ] command responses should be separated from event responses.
 - [ ] fix mimetype retrieval
 - [ ] reorganize code, cleanup of event generation
-- [ ]
 
-# Web Frontend
+
+# References
+
+- Logo: [Lantern by zidney](https://thenounproject.com/zidney0721/uploads/?i=1500728)
+
+## Web Frontend
+
 - https://chromedevtools.github.io/devtools-protocol/
 - https://github.com/ChromeDevTools
 - https://github.com/christian-bromann/devtools-backend
@@ -26,7 +31,8 @@ Peer into your requests.
 - https://github.com/ChromeDevTools/devtools-frontend/issues/95
 - https://github.com/chromedp/cdproto-gen
 
-# API/Websockets
+## API/Websockets
+
 - https://github.com/ChromeDevTools/awesome-chrome-devtools#chrome-devtools-protocol
 - https://medium.freecodecamp.org/million-websockets-and-go-cc58418460bb
 - https://scotch.io/bar-talk/build-a-realtime-chat-server-with-go-and-websockets
@@ -38,12 +44,13 @@ Peer into your requests.
 - https://medium.com/rungo/anatomy-of-channels-in-go-concurrency-in-go-1ec336086adb
 
 
-# Database
+## Database
+
 - http://coussej.github.io/2015/09/15/Listening-to-generic-JSON-notifications-from-PostgreSQL-in-Go/
 
-# Proxy
-- https://github.com/elazarl/goproxy
+## Proxy
 
+- https://github.com/elazarl/goproxy
 - https://gist.github.com/Soulou/6048212
 - https://github.com/docker/go-docker/blob/master/hijack.go
 - https://stackoverflow.com/questions/23812330/go-hijack-client-connection
@@ -54,8 +61,3 @@ Peer into your requests.
 - https://github.com/go-httpproxy/httpproxy
 - http://speakmy.name/2014/07/29/http-request-debugging-in-go/
 - https://github.com/roglew/pappy-proxy/tree/master/pappyproxy/interface/repeater
-
-
-# References
-
-- Logo: [Lantern by zidney](https://thenounproject.com/zidney0721/uploads/?i=1500728)
