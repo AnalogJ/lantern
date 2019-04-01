@@ -16,7 +16,10 @@ Peer into your requests.
 - [ ] command responses should be separated from event responses.
 - [ ] fix mimetype retrieval
 - [ ] reorganize code, cleanup of event generation
-
+- [ ] README.md documentation.
+- [ ] variables for connection strings.
+- [ ] better error handling.
+- [ ] **STRETCH** live request interception/hijacking & modification.
 
 # References
 
