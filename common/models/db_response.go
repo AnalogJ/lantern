@@ -16,3 +16,7 @@ type DbResponse struct {
 	RespondedOn   time.Time              `gorm:"NOT NULL" mapstructure:"responded_on"`
 	CreatedAt     time.Time              `gorm:"NOT NULL" mapstructure:"created_at"`
 }
+
+func (DbResponse) TableName() string {
+	return "responses"
+}

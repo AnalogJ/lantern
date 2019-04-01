@@ -14,7 +14,7 @@ services:
       context: .
       dockerfile: ./api/Dockerfile
     ports:
-    - "9000:9000"
+    - "8081:9000"
     depends_on:
       database:
         condition: service_healthy
@@ -24,12 +24,11 @@ services:
       context: .
       dockerfile: ./proxy/Dockerfile
     ports:
-    - "8080:8080"
-    command: 'lantern_httpdump'
-#    depends_on:
-#      database:
-#        condition: service_healthy
-
+    - "8082:9000"
+    command: 'lantern_generator' # lantern_proxy default
+    depends_on:
+      database:
+        condition: service_healthy
 
   database:
     image: healthcheck/postgres
