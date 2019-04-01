@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/elazarl/goproxy"
 	_ "github.com/lib/pq"
+    "encoding/base64"
 
 	"log"
 	"flag"
@@ -51,10 +52,10 @@ func main() {
 			Method:        req.Method,
 			Url:           req.RequestURI,
 			Headers:       headers,
-			Body:          safeRequestBody(req),
+			Body:          base64EncodedRequestBody(req),
 			ContentLength: req.ContentLength,
 			Host:          req.Host,
-			RequestedOn: time.Now(),
+			RequestedOn:   time.Now(),
 		}
 
 		if err = db.Create(&dbRequest).Error; err != nil {
@@ -82,14 +83,14 @@ func main() {
 
 
 		dbResponse := models.DbResponse{
-			RequestId: ctx.UserData.(map[string]uint)["RequestId"],
-			Status: resp.Status,
-			StatusCode: resp.StatusCode,
+			RequestId:     ctx.UserData.(map[string]uint)["RequestId"],
+			Status:        resp.Status,
+			StatusCode:    resp.StatusCode,
 			Headers:       headers,
-			Body:          safeResponseBody(resp),
+			Body:          base64EncodedResponseBody(resp),
 			ContentLength: resp.ContentLength,
-			MimeType: resp.Header.Get("Content-Type"),
-			RespondedOn: time.Now(),
+			MimeType:      resp.Header.Get("Content-Type"),
+			RespondedOn:   time.Now(),
 		}
 
 		if err = db.Create(&dbResponse).Error; err != nil {
@@ -104,7 +105,7 @@ func main() {
 	log.Fatal(http.ListenAndServe(*addr, proxy))
 }
 
-func safeRequestBody(req *http.Request) string {
+func base64EncodedRequestBody(req *http.Request) string {
 
 	var bodyBytes []byte
 	if req.Body != nil {
@@ -113,10 +114,10 @@ func safeRequestBody(req *http.Request) string {
 	// Restore the io.ReadCloser to its original state
 	req.Body = ioutil.NopCloser(bytes.NewBuffer(bodyBytes))
 	// Use the content
-	return string(bodyBytes)
+	return base64.StdEncoding.EncodeToString(bodyBytes)
 }
 
-func safeResponseBody(resp *http.Response) string {
+func base64EncodedResponseBody(resp *http.Response) string {
 
 	var bodyBytes []byte
 	if resp.Body != nil {
@@ -125,5 +126,5 @@ func safeResponseBody(resp *http.Response) string {
 	// Restore the io.ReadCloser to its original state
 	resp.Body = ioutil.NopCloser(bytes.NewBuffer(bodyBytes))
 	// Use the content
-	return string(bodyBytes)
+	return base64.StdEncoding.EncodeToString(bodyBytes)
 }

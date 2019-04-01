@@ -134,7 +134,7 @@ func processDatabaseEvent(dbType string, dbEvent map[string]interface{}) (cdprot
 				//RemotePort         int64            `json:"remotePort,omitempty"`         // Remote port.
 				//FromDiskCache      bool             `json:"fromDiskCache,omitempty"`      // Specifies that the request was served from the disk cache.
 				//FromServiceWorker  bool             `json:"fromServiceWorker,omitempty"`  // Specifies that the request was served from the ServiceWorker.
-				EncodedDataLength:  -1, // Total number of bytes received for this request so far.
+				EncodedDataLength:  float64(len(response.Body)), // Total number of bytes received for this request so far.
 				//Timing:             *ResourceTiming  `json:"timing,omitempty"`             // Timing information for the given request.
 				//Protocol           string           `json:"protocol,omitempty"`           // Protocol used to fetch this request.
 				//SecurityState      security.State   `json:"securityState"`                // Security state of the request resource.

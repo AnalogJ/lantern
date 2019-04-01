@@ -1,6 +1,14 @@
 # lantern
 Peer into your requests.
 
+# TODO:
+
+- [ ] SSL interception
+- [ ] backfill requests when new Websocket connection opened
+- [ ] command responses should be separated from event responses.
+- [ ] fix mimetype retrieval
+- [ ] reorganize code, cleanup of event generation
+- [ ]
 
 # Web Frontend
 - https://chromedevtools.github.io/devtools-protocol/

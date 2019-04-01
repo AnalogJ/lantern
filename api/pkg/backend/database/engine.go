@@ -12,6 +12,7 @@ import (
 	"github.com/analogj/lantern/common/models"
 	"github.com/chromedp/cdproto/network"
 	"github.com/chromedp/cdproto/cdp"
+	"github.com/jinzhu/gorm"
 )
 
 func New(toFrontend *chan cdproto.Message, toBackend *chan cdproto.Message, connString string) backend.Interface{
@@ -32,7 +33,16 @@ type engine struct {
 // listen to backend messages from Database (Postgres)
 func (e *engine) ListenMessages(){
 
-	_, err := sql.Open("postgres", e.connString)
+	//open database connection
+	orm, err := gorm.Open("postgres", e.connString)
+	if err != nil {
+		panic(err)
+	}
+	defer orm.Close()
+
+
+	//setup raw sql connection to postgres for event notifications.
+	_, err = sql.Open("postgres", e.connString)
 	if err != nil {
 		panic(err)
 	}
@@ -93,8 +103,8 @@ func (e *engine) ListenMessages(){
 				dataRecievedPayload := network.EventDataReceived{
 					RequestID: network.RequestID(fmt.Sprint(dbResponse.RequestId)),
 					Timestamp: &timestamp,
-					DataLength: -1,
-					EncodedDataLength: -1,
+					DataLength: dbResponse.ContentLength,
+					EncodedDataLength: int64(len(dbResponse.Body)),
 				}
 				dataRecievedJsonBytes, err := json.Marshal(dataRecievedPayload)
 				if err != nil {
@@ -109,7 +119,7 @@ func (e *engine) ListenMessages(){
 				loadingFinishedPayload := network.EventLoadingFinished{
 					RequestID: network.RequestID(fmt.Sprint(dbResponse.RequestId)),
 					Timestamp: &timestamp,
-					EncodedDataLength: -1,
+					EncodedDataLength: float64(len(dbResponse.Body)),
 				}
 				loadingFinishedJsonBytes, err := json.Marshal(loadingFinishedPayload)
 				if err != nil {
@@ -134,8 +144,28 @@ func (e *engine) ListenMessages(){
 				//TODO: do a database query for requests and responses and forward to frontend.
 
 			case cdproto.CommandNetworkGetResponseBody:
-				//TODO: do a database query for the response body and forward to frontend
-				//toBackend messages should be parsed, and the
+				params := network.GetResponseBodyParams{}
+				if err := json.Unmarshal(frontendCmd.Params, &params); err != nil {
+					//TODO:log an error message
+					fmt.Println("An error occured parsing response body request params")
+					continue
+				}
+				dbresp := models.DbResponse{}
+				orm.First(&dbresp, "request_id = ?", params.RequestID)
+
+				fmt.Println("Found ")
+				payload := network.GetResponseBodyReturns{
+					Body: dbresp.Body,
+					Base64encoded:true,
+				}
+
+				if payloadJson, err := payload.MarshalJSON(); err == nil {
+					wsresp := cdproto.Message{
+						ID: frontendCmd.ID,
+						Result: payloadJson,
+					}
+					e.toFrontend <- wsresp
+				}
 			}
 		}
 	}
