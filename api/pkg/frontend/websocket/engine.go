@@ -1,12 +1,12 @@
 package websocket
 
 import (
-	"github.com/gorilla/websocket"
-	"net/http"
-	"log"
-	"github.com/chromedp/cdproto"
-	"github.com/analogj/lantern/api/pkg/frontend"
 	"fmt"
+	"github.com/analogj/lantern/api/pkg/frontend"
+	"github.com/chromedp/cdproto"
+	"github.com/gorilla/websocket"
+	"log"
+	"net/http"
 )
 
 // Class constructor.
@@ -19,8 +19,6 @@ func New(toFrontend *chan cdproto.Message, toBackend *chan cdproto.Message) fron
 	return e
 }
 
-
-
 // Configure the upgrader
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
@@ -30,11 +28,11 @@ var upgrader = websocket.Upgrader{
 
 type engine struct {
 	toFrontend chan cdproto.Message     // (listen & send) listen to this channel for messages to send to connected clients, also directly send responses to this channel
-	toBackend chan<- cdproto.Message     // (send-only) this is a channel that can be used to send messages/requests to the backend.
+	toBackend  chan<- cdproto.Message   // (send-only) this is a channel that can be used to send messages/requests to the backend.
 	clients    map[*websocket.Conn]bool // map of long lived connected clients
 }
 
-func (e *engine) RegisterConnection(w http.ResponseWriter, r *http.Request){
+func (e *engine) RegisterConnection(w http.ResponseWriter, r *http.Request) {
 	// Upgrade initial GET request to a websocket
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
@@ -72,11 +70,6 @@ func (e *engine) RegisterConnection(w http.ResponseWriter, r *http.Request){
 		switch wsCommand.Method.String() {
 
 		//enable specific tabs
-		case cdproto.CommandPageEnable:
-		case cdproto.CommandDOMEnable:
-			response.Result = []byte("{}")
-			e.toFrontend <- response
-
 		case cdproto.CommandNetworkEnable:
 			response.Result = []byte("{}")
 			e.toFrontend <- response
@@ -85,16 +78,17 @@ func (e *engine) RegisterConnection(w http.ResponseWriter, r *http.Request){
 			e.toBackend <- wsCommand
 
 		//disable specific features
-		case cdproto.CommandNetworkEmulateNetworkConditions:
-		case cdproto.CommandEmulationCanEmulate:
+		case cdproto.CommandPageEnable,
+			cdproto.CommandDOMEnable,
+			cdproto.CommandRuntimeEnable,
+			cdproto.CommandNetworkEmulateNetworkConditions,
+			cdproto.CommandEmulationCanEmulate:
 			response.Result = []byte(`{"result":false}`)
 			e.toFrontend <- response
-
 
 		//forward some commands to the backend (queries, etc)
 		case cdproto.CommandNetworkGetResponseBody:
 			e.toBackend <- wsCommand
-
 
 		//Fallback, say that we don't support this command.
 		default:
@@ -111,7 +105,7 @@ func (e *engine) RegisterConnection(w http.ResponseWriter, r *http.Request){
 func (e *engine) ListenMessages() {
 	for {
 		// Grab the next message from the toFrontend channel
-		msg := <- e.toFrontend
+		msg := <-e.toFrontend
 
 		// Send it out to every client that is currently connected
 		log.Printf("sending frontend msg sent to clients: %v %s %v", msg.ID, msg.Method.String(), string(msg.Result))

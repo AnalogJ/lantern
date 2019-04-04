@@ -1,20 +1,20 @@
 package main
 
 import (
+	"encoding/base64"
 	"github.com/elazarl/goproxy"
 	_ "github.com/lib/pq"
-    "encoding/base64"
 
-	"log"
-	"flag"
-	"net/http"
-	"github.com/jinzhu/gorm"
-	"os"
-	"time"
-	"github.com/analogj/lantern/common/models"
-	"strings"
-	"io/ioutil"
 	"bytes"
+	"flag"
+	"github.com/analogj/lantern/common/models"
+	"github.com/jinzhu/gorm"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"os"
+	"strings"
+	"time"
 )
 
 func main() {
@@ -32,16 +32,23 @@ func main() {
 	db.LogMode(true)
 	db.SetLogger(log.New(os.Stdout, "\r\n", 0))
 
-
-
 	//start proxy server.
 
 	proxy := goproxy.NewProxyHttpServer()
 	proxy.Verbose = *verbose
 	//proxy.OnRequest(goproxy.ReqHostMatches(regexp.MustCompile("^.*$"))).HandleConnect(goproxy.AlwaysReject)
+	proxy.OnRequest().HandleConnect(goproxy.AlwaysMitm)
 	proxy.OnRequest().DoFunc(func(req *http.Request, ctx *goproxy.ProxyCtx) (*http.Request, *http.Response) {
 
-		log.Printf("printing intercepted request: %v %v\n", req, ctx)
+		//log.Printf("printing intercepted request: %v %v\n", req, ctx)
+
+		//jsonBytes, err := json.Marshal(req)
+		//if err == nil {
+		//	//http.Error(w, fmt.Sprint(err), http.StatusInternalServerError)
+		//	log.Printf("========= DUMPED REQUEST: %q", string(jsonBytes))
+		//
+		//} else {
+		//}
 
 		headers := map[string]interface{}{}
 		for k, v := range req.Header {
@@ -50,7 +57,7 @@ func main() {
 
 		dbRequest := models.DbRequest{
 			Method:        req.Method,
-			Url:           req.RequestURI,
+			Url:           req.URL.String(),
 			Headers:       headers,
 			Body:          base64EncodedRequestBody(req),
 			ContentLength: req.ContentLength,
@@ -81,7 +88,6 @@ func main() {
 			headers[k] = strings.Join(v, ";")
 		}
 
-
 		dbResponse := models.DbResponse{
 			RequestId:     ctx.UserData.(map[string]uint)["RequestId"],
 			Status:        resp.Status,
@@ -109,7 +115,7 @@ func base64EncodedRequestBody(req *http.Request) string {
 
 	var bodyBytes []byte
 	if req.Body != nil {
-		bodyBytes, _= ioutil.ReadAll(req.Body)
+		bodyBytes, _ = ioutil.ReadAll(req.Body)
 	}
 	// Restore the io.ReadCloser to its original state
 	req.Body = ioutil.NopCloser(bytes.NewBuffer(bodyBytes))
@@ -121,7 +127,7 @@ func base64EncodedResponseBody(resp *http.Response) string {
 
 	var bodyBytes []byte
 	if resp.Body != nil {
-		bodyBytes, _= ioutil.ReadAll(resp.Body)
+		bodyBytes, _ = ioutil.ReadAll(resp.Body)
 	}
 	// Restore the io.ReadCloser to its original state
 	resp.Body = ioutil.NopCloser(bytes.NewBuffer(bodyBytes))

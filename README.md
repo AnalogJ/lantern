@@ -64,3 +64,5 @@ Peer into your requests.
 - https://github.com/go-httpproxy/httpproxy
 - http://speakmy.name/2014/07/29/http-request-debugging-in-go/
 - https://github.com/roglew/pappy-proxy/tree/master/pappyproxy/interface/repeater
+- https://github.com/elazarl/goproxy/issues/9
+- `curl -v -L -x http://localhost:8082 -p  --proxy-insecure -k https://www.example.com`

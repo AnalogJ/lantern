@@ -11,20 +11,13 @@ CREATE OR REPLACE FUNCTION notify_event() RETURNS TRIGGER AS \$\$
 
     BEGIN
 
-        -- Convert the old or new row to JSON, based on the kind of action.
-        -- Action = DELETE?             -> OLD row
-        -- Action = INSERT or UPDATE?   -> NEW row
-        IF (TG_OP = 'DELETE') THEN
-            data = row_to_json(OLD);
-        ELSE
-            data = row_to_json(NEW);
-        END IF;
+        -- Action = INSERT   -> NEW row
 
         -- Contruct the notification as a JSON string.
         notification = json_build_object(
                           'table',TG_TABLE_NAME,
                           'action', TG_OP,
-                          'data', data);
+                          'id', NEW.id);
 
 
         -- Execute pg_notify(channel, notification)
@@ -52,7 +45,7 @@ CREATE TABLE requests(
 );
 
 CREATE TRIGGER requests_notify_event
-AFTER INSERT OR UPDATE ON requests
+AFTER INSERT ON requests
     FOR EACH ROW EXECUTE PROCEDURE notify_event();
 
 
@@ -73,7 +66,7 @@ CREATE TABLE responses
 );
 
 CREATE TRIGGER responses_notify_event
-AFTER INSERT OR UPDATE ON responses
+AFTER INSERT ON responses
     FOR EACH ROW EXECUTE PROCEDURE notify_event();
 
 SQL

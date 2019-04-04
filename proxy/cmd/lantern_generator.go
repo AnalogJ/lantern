@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
-	"time"
 	"github.com/jinzhu/gorm"
 	_ "github.com/lib/pq"
+	"time"
 
 	"github.com/analogj/lantern/common/models"
 	"log"
@@ -23,22 +23,20 @@ func main() {
 	db.LogMode(true)
 	db.SetLogger(log.New(os.Stdout, "\r\n", 0))
 
-
-
 	for {
 
 		request := models.DbRequest{
-			Method:        "GET",
-			Url:           "http://www.chromium.org/",
-			Headers:       models.HeaderMap(map[string]interface{}{
-				"Accept":"text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-				"Upgrade-Insecure-Requests":"1",
-				"User-Agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36",
+			Method: "GET",
+			Url:    "http://www.chromium.org/",
+			Headers: models.HeaderMap(map[string]interface{}{
+				"Accept":                    "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+				"Upgrade-Insecure-Requests": "1",
+				"User-Agent":                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36",
 			}),
 			Body:          "",
 			ContentLength: 0,
 			Host:          "www.chromium.org",
-			RequestedOn: time.Now(),
+			RequestedOn:   time.Now(),
 		}
 
 		if err = db.Create(&request).Error; err != nil {
@@ -51,18 +49,18 @@ func main() {
 		time.Sleep(2 * time.Second)
 
 		response := models.DbResponse{
-			RequestId: request.Id,
-			Status: "200 OK",
-			StatusCode:	 200,
-			Headers: 	 models.HeaderMap(map[string]interface{}{
-				"Accept":"text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-				"Upgrade-Insecure-Requests":"1",
-				"User-Agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36",
+			RequestId:  request.Id,
+			Status:     "200 OK",
+			StatusCode: 200,
+			Headers: models.HeaderMap(map[string]interface{}{
+				"Accept":                    "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+				"Upgrade-Insecure-Requests": "1",
+				"User-Agent":                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36",
 			}),
-			Body:		"",
+			Body:          "",
 			ContentLength: 0,
-			MimeType: "text/png",
-			RespondedOn: time.Now(),
+			MimeType:      "text/png",
+			RespondedOn:   time.Now(),
 		}
 
 		if err = db.Create(&response).Error; err != nil {
@@ -71,7 +69,6 @@ func main() {
 		}
 
 		fmt.Println("New response ID is:", response.Id)
-
 
 		// create a new database entry every 5 seconds.
 		time.Sleep(3 * time.Second)
