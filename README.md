@@ -1,3 +1,5 @@
+# lantern
+
 <p align="center">
   <a href="https://github.com/AnalogJ/lantern">
   <img width="300" alt="lexicon_view" src="https://github.com/AnalogJ/lantern/blob/master/logo.svg">
@@ -5,9 +7,18 @@
 </p>
 
 
-
-# lantern
 Peer into your requests.
+
+Lantern is a MITM proxy server that is built in Go and uses
+
+# Introduction
+
+# Setup
+
+# Usage
+
+# TroubleShooting & Useful Tools
+
 
 # TODO:
 
@@ -33,6 +44,13 @@ Peer into your requests.
 - https://github.com/ChromeDevTools/awesome-chrome-devtools
 - https://github.com/ChromeDevTools/devtools-frontend/issues/95
 - https://github.com/chromedp/cdproto-gen
+- https://blog.hqcodeshop.fi/archives/402-iPhone-Mobile-Profile-for-a-new-CA-root-certificate-Case-CAcert.org.html
+- https://www.howtogeek.com/253325/how-to-create-an-ios-configuration-profile-and-alter-hidden-settings/
+- https://mdzlog.alcor.net/2012/11/15/decoding-a-mobileconfig-file-containing-a-cisco-ipsec-vpn-configuration/
+- https://stackoverflow.com/questions/16727038/how-to-make-mobileconfig-file-on-ios-device
+- https://developer.apple.com/library/archive/documentation/NetworkingInternet/Conceptual/iPhoneOTAConfiguration/Introduction/Introduction.html
+- https://github.com/mritd/strongswan/blob/master/generate-mobileconfig.sh
+
 
 ## API/Websockets
 
@@ -66,3 +84,6 @@ Peer into your requests.
 - https://github.com/roglew/pappy-proxy/tree/master/pappyproxy/interface/repeater
 - https://github.com/elazarl/goproxy/issues/9
 - `curl -v -L -x http://localhost:8082 -p  --proxy-insecure -k https://www.example.com`
+
+# License
+

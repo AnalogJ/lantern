@@ -55,11 +55,12 @@ func main() {
 			headers[k] = strings.Join(v, ";")
 		}
 
+		encodedBody, _ := base64EncodedRequestBody(req)
 		dbRequest := models.DbRequest{
 			Method:        req.Method,
 			Url:           req.URL.String(),
 			Headers:       headers,
-			Body:          base64EncodedRequestBody(req),
+			Body:          encodedBody,
 			ContentLength: req.ContentLength,
 			Host:          req.Host,
 			RequestedOn:   time.Now(),
@@ -88,14 +89,15 @@ func main() {
 			headers[k] = strings.Join(v, ";")
 		}
 
+		encodedBody, mimeType := base64EncodedResponseBody(resp)
 		dbResponse := models.DbResponse{
 			RequestId:     ctx.UserData.(map[string]uint)["RequestId"],
 			Status:        resp.Status,
 			StatusCode:    resp.StatusCode,
 			Headers:       headers,
-			Body:          base64EncodedResponseBody(resp),
+			Body:          encodedBody,
 			ContentLength: resp.ContentLength,
-			MimeType:      resp.Header.Get("Content-Type"),
+			MimeType:      mimeType,
 			RespondedOn:   time.Now(),
 		}
 
@@ -111,7 +113,7 @@ func main() {
 	log.Fatal(http.ListenAndServe(*addr, proxy))
 }
 
-func base64EncodedRequestBody(req *http.Request) string {
+func base64EncodedRequestBody(req *http.Request) (string, string) {
 
 	var bodyBytes []byte
 	if req.Body != nil {
@@ -120,10 +122,13 @@ func base64EncodedRequestBody(req *http.Request) string {
 	// Restore the io.ReadCloser to its original state
 	req.Body = ioutil.NopCloser(bytes.NewBuffer(bodyBytes))
 	// Use the content
-	return base64.StdEncoding.EncodeToString(bodyBytes)
+
+	mimeType := http.DetectContentType(bodyBytes)
+
+	return base64.StdEncoding.EncodeToString(bodyBytes), mimeType
 }
 
-func base64EncodedResponseBody(resp *http.Response) string {
+func base64EncodedResponseBody(resp *http.Response) (string, string) {
 
 	var bodyBytes []byte
 	if resp.Body != nil {
@@ -132,5 +137,8 @@ func base64EncodedResponseBody(resp *http.Response) string {
 	// Restore the io.ReadCloser to its original state
 	resp.Body = ioutil.NopCloser(bytes.NewBuffer(bodyBytes))
 	// Use the content
-	return base64.StdEncoding.EncodeToString(bodyBytes)
+
+	mimeType := http.DetectContentType(bodyBytes)
+
+	return base64.StdEncoding.EncodeToString(bodyBytes), mimeType
 }
