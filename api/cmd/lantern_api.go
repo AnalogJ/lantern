@@ -5,13 +5,12 @@ import (
 
 	db "github.com/analogj/lantern/api/pkg/backend/database"
 	ws "github.com/analogj/lantern/api/pkg/frontend/websocket"
-	"github.com/chromedp/cdproto"
-
 	"log"
+	"github.com/analogj/lantern/api/pkg/models"
 )
 
-var toFrontend = make(chan cdproto.Message) // send to websocket (frontend)
-var toBackend = make(chan cdproto.Message)  // send to database (backend)
+var toFrontend = make(chan models.Wrapper ) // send to websocket (frontend)
+var toBackend = make(chan models.Wrapper )  // send to database (backend)
 
 func main() {
 

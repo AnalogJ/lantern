@@ -64,8 +64,6 @@ func detectResourceType(mimeType string) network.ResourceType {
 
 
 func processDatabaseEvent(orm *gorm.DB, dbType string, dbId int) (cdproto.Message, interface{}, error) {
-	event := cdproto.Message{}
-
 	switch dbType {
 
 	case "requests":
@@ -73,41 +71,8 @@ func processDatabaseEvent(orm *gorm.DB, dbType string, dbId int) (cdproto.Messag
 		request := models.DbRequest{}
 		orm.First(&request, "id = ?", dbId)
 
-		event.Method = cdproto.EventNetworkRequestWillBeSent
-
-		timestamp := cdp.MonotonicTime(request.CreatedAt)
-		walltime := cdp.TimeSinceEpoch(request.RequestedOn)
-		initiator := network.Initiator{
-			Type: network.InitiatorTypeOther,
-		}
-
-		payload := network.EventRequestWillBeSent{
-			RequestID:   network.RequestID(fmt.Sprint(request.Id)),
-			LoaderID:    cdp.LoaderID(""), // Loader identifier. Empty string if the request is fetched from worker.
-			DocumentURL: request.Url,      // URL of the document this request is loaded for.
-			Request: &network.Request{
-				URL: request.Url, // Request URL (without fragment).
-				//URLFragment      string                    `json:"urlFragment,omitempty"`      // Fragment of the requested URL starting with hash, if present.
-				Method:      request.Method,                   // HTTP request method.
-				Headers:     network.Headers(request.Headers), // HTTP request headers.
-				PostData:    request.Body,                     // HTTP POST request data.
-				HasPostData: len(request.Body) > 0,            // True when the request has POST data. Note that postData might still be omitted when this flag is true when the data is too long.
-				//MixedContentType security.MixedContentType `json:"mixedContentType,omitempty"` // The mixed content type of the request.
-				//InitialPriority  ResourcePriority          `json:"initialPriority"`            // Priority of the resource request at the time request is sent.
-				//ReferrerPolicy: // The referrer policy of the request, as defined in https://www.w3.org/TR/referrer-policy/
-			}, // Request data.
-			Timestamp: &timestamp, // Timestamp.
-			WallTime:  &walltime,  // Timestamp.
-			Initiator: &initiator, // Request initiator.
-		}
-
-		jsonBytes, err := json.Marshal(payload)
-		if err != nil {
-			return event, nil, err
-		}
-
-		event.Params = jsonBytes
-		return event, request, nil
+		message, err := generateRequestWillBeSentEvent(request)
+		return message, request, err
 
 	case "responses":
 		response := models.DbResponse{}
@@ -116,60 +81,147 @@ func processDatabaseEvent(orm *gorm.DB, dbType string, dbId int) (cdproto.Messag
 		request := models.DbRequest{}
 		orm.First(&request, "id = ?", response.RequestId)
 
-		event.Method = cdproto.EventNetworkResponseReceived
-		timestamp := cdp.MonotonicTime(response.CreatedAt)
-		//walltime := cdp.TimeSinceEpoch(response.RespondedOn)
-		//initiator := network.Initiator{
-		//	Type: network.InitiatorTypeOther,
-		//}
 
-		//Type      ResourceType       `json:"type"`              // Resource type.
-		//Response  *Response          `json:"response"`          // Response data.
-		//FrameID   cdp.FrameID        `json:"frameId,omitempty"` // Frame identifier.
-
-
-		//determine the correct resource type:
-		resourceType := detectResourceType(response.MimeType)
-
-
-		payload := network.EventResponseReceived{
-
-			RequestID: network.RequestID(fmt.Sprint(response.RequestId)),
-			LoaderID:  cdp.LoaderID(""),          // Loader identifier. Empty string if the request is fetched from worker.
-			Timestamp: &timestamp,                // Timestamp.
-			Type:      resourceType, // Resource type.
-			Response: &network.Response{
-				URL: 		request.Url,                          // Response URL. This URL can be different from CachedResource.url in case of redirect.
-				Status:     int64(response.StatusCode),        // HTTP response status code.
-				StatusText: response.Status,                   // HTTP response status text.
-				Headers:    network.Headers(response.Headers), // HTTP response headers.
-				MimeType:   response.MimeType,                 // Resource mimeType as determined by the browser.
-				RequestHeaders: network.Headers(request.Headers),     // Refined HTTP request headers that were actually transmitted over the network.
-				//RequestHeadersText string           `json:"requestHeadersText,omitempty"` // HTTP request headers text.
-				ConnectionReused: false,
-				//ConnectionID       float64          `json:"connectionId"`                 // Physical connection id that was actually used for this request.
-				//RemoteIPAddress    string           `json:"remoteIPAddress,omitempty"`    // Remote IP address.
-				//RemotePort         int64            `json:"remotePort,omitempty"`         // Remote port.
-				//FromDiskCache      bool             `json:"fromDiskCache,omitempty"`      // Specifies that the request was served from the disk cache.
-				//FromServiceWorker  bool             `json:"fromServiceWorker,omitempty"`  // Specifies that the request was served from the ServiceWorker.
-				EncodedDataLength: float64(len(response.Body)), // Total number of bytes received for this request so far.
-				//Timing:             *ResourceTiming  `json:"timing,omitempty"`             // Timing information for the given request.
-				//Protocol           string           `json:"protocol,omitempty"`           // Protocol used to fetch this request.
-				//SecurityState      security.State   `json:"securityState"`                // Security state of the request resource.
-				//SecurityDetails    *SecurityDetails `json:"securityDetails,omitempty"`    // Security details for the request.
-			},
-		}
-
-		jsonBytes, err := json.Marshal(payload)
-		if err != nil {
-			return event, nil, err
-		}
-
-		event.Params = jsonBytes
-		return event, response, nil
+		message, err := generateNetworkResponseReceived(request, response)
+		return message, response, err
 
 	default:
-		return event, nil, errors.New("unknown DB event type")
+		return cdproto.Message{}, nil, errors.New("unknown DB event type")
 
 	}
+}
+
+
+func generateRequestWillBeSentEvent(dbRequest models.DbRequest) (cdproto.Message, error){
+	event := cdproto.Message{
+		Method: cdproto.EventNetworkRequestWillBeSent,
+	}
+
+	timestamp := cdp.MonotonicTime(dbRequest.CreatedAt)
+	walltime := cdp.TimeSinceEpoch(dbRequest.RequestedOn)
+	initiator := network.Initiator{
+		Type: network.InitiatorTypeOther,
+	}
+
+	payload := network.EventRequestWillBeSent{
+		RequestID:   network.RequestID(fmt.Sprint(dbRequest.Id)),
+		LoaderID:    cdp.LoaderID(""), // Loader identifier. Empty string if the request is fetched from worker.
+		DocumentURL: dbRequest.Url,      // URL of the document this request is loaded for.
+		Request: &network.Request{
+			URL: dbRequest.Url, // Request URL (without fragment).
+			//URLFragment      string                    `json:"urlFragment,omitempty"`      // Fragment of the requested URL starting with hash, if present.
+			Method:      dbRequest.Method,                   // HTTP request method.
+			Headers:     network.Headers(dbRequest.Headers), // HTTP request headers.
+			PostData:    dbRequest.Body,                     // HTTP POST request data.
+			HasPostData: len(dbRequest.Body) > 0,            // True when the request has POST data. Note that postData might still be omitted when this flag is true when the data is too long.
+			//MixedContentType security.MixedContentType `json:"mixedContentType,omitempty"` // The mixed content type of the request.
+			//InitialPriority  ResourcePriority          `json:"initialPriority"`            // Priority of the resource request at the time request is sent.
+			//ReferrerPolicy: // The referrer policy of the request, as defined in https://www.w3.org/TR/referrer-policy/
+		}, // Request data.
+		Timestamp: &timestamp, // Timestamp.
+		WallTime:  &walltime,  // Timestamp.
+		Initiator: &initiator, // Request initiator.
+	}
+
+	jsonBytes, err := json.Marshal(payload)
+	if err != nil {
+		return event, err
+	}
+
+	event.Params = jsonBytes
+	return event, nil
+}
+
+func generateNetworkResponseReceived(dbRequest models.DbRequest, dbResponse models.DbResponse) (cdproto.Message, error) {
+	message := cdproto.Message {
+		Method: cdproto.EventNetworkResponseReceived,
+	}
+	timestamp := cdp.MonotonicTime(dbResponse.CreatedAt)
+	//walltime := cdp.TimeSinceEpoch(response.RespondedOn)
+	//initiator := network.Initiator{
+	//	Type: network.InitiatorTypeOther,
+	//}
+
+	//Type      ResourceType       `json:"type"`              // Resource type.
+	//Response  *Response          `json:"response"`          // Response data.
+	//FrameID   cdp.FrameID        `json:"frameId,omitempty"` // Frame identifier.
+
+
+	//determine the correct resource type:
+	resourceType := detectResourceType(dbResponse.MimeType)
+
+
+	payload := network.EventResponseReceived{
+
+		RequestID: network.RequestID(fmt.Sprint(dbResponse.RequestId)),
+		LoaderID:  cdp.LoaderID(""),          // Loader identifier. Empty string if the request is fetched from worker.
+		Timestamp: &timestamp,                // Timestamp.
+		Type:      resourceType, // Resource type.
+		Response: &network.Response{
+			URL: 		dbRequest.Url,                          // Response URL. This URL can be different from CachedResource.url in case of redirect.
+			Status:     int64(dbResponse.StatusCode),        // HTTP response status code.
+			StatusText: dbResponse.Status,                   // HTTP response status text.
+			Headers:    network.Headers(dbResponse.Headers), // HTTP response headers.
+			MimeType:   dbResponse.MimeType,                 // Resource mimeType as determined by the browser.
+			RequestHeaders: network.Headers(dbRequest.Headers),     // Refined HTTP request headers that were actually transmitted over the network.
+			//RequestHeadersText string           `json:"requestHeadersText,omitempty"` // HTTP request headers text.
+			ConnectionReused: false,
+			//ConnectionID       float64          `json:"connectionId"`                 // Physical connection id that was actually used for this request.
+			//RemoteIPAddress    string           `json:"remoteIPAddress,omitempty"`    // Remote IP address.
+			//RemotePort         int64            `json:"remotePort,omitempty"`         // Remote port.
+			//FromDiskCache      bool             `json:"fromDiskCache,omitempty"`      // Specifies that the request was served from the disk cache.
+			//FromServiceWorker  bool             `json:"fromServiceWorker,omitempty"`  // Specifies that the request was served from the ServiceWorker.
+			EncodedDataLength: float64(len(dbResponse.Body)), // Total number of bytes received for this request so far.
+			//Timing:             *ResourceTiming  `json:"timing,omitempty"`             // Timing information for the given request.
+			//Protocol           string           `json:"protocol,omitempty"`           // Protocol used to fetch this request.
+			//SecurityState      security.State   `json:"securityState"`                // Security state of the request resource.
+			//SecurityDetails    *SecurityDetails `json:"securityDetails,omitempty"`    // Security details for the request.
+		},
+	}
+
+	jsonBytes, err := json.Marshal(payload)
+	if err != nil {
+		return message, err
+	}
+
+	message.Params = jsonBytes
+	return message, err
+}
+
+
+func generateDataReceivedEvent(dbResponse models.DbResponse) (cdproto.Message, error){
+	eventDataReceived := cdproto.Message{
+		Method: cdproto.EventNetworkDataReceived,
+	}
+	timestamp := cdp.MonotonicTime(dbResponse.CreatedAt)
+	dataRecievedPayload := network.EventDataReceived{
+		RequestID:         network.RequestID(fmt.Sprint(dbResponse.RequestId)),
+		Timestamp:         &timestamp,
+		DataLength:        dbResponse.ContentLength,
+		EncodedDataLength: int64(len(dbResponse.Body)),
+	}
+	dataRecievedJsonBytes, err := json.Marshal(dataRecievedPayload)
+	if err != nil {
+		return cdproto.Message{}, err
+	}
+	eventDataReceived.Params = dataRecievedJsonBytes
+	return eventDataReceived, nil
+}
+
+func generateLoadingFinishedEvent(dbResponse models.DbResponse) (cdproto.Message, error) {
+	eventLoadingFinished := cdproto.Message{
+		Method: cdproto.EventNetworkLoadingFinished,
+	}
+	timestamp := cdp.MonotonicTime(dbResponse.CreatedAt)
+	loadingFinishedPayload := network.EventLoadingFinished{
+		RequestID:         network.RequestID(fmt.Sprint(dbResponse.RequestId)),
+		Timestamp:         &timestamp,
+		EncodedDataLength: float64(len(dbResponse.Body)),
+	}
+	loadingFinishedJsonBytes, err := json.Marshal(loadingFinishedPayload)
+	if err != nil {
+		return cdproto.Message{}, err
+	}
+	eventLoadingFinished.Params = loadingFinishedJsonBytes
+	return eventLoadingFinished, nil
 }

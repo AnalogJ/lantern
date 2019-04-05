@@ -32,18 +32,19 @@ docker-compose up
 
 - [-] SSL interception
     - [ ] Add links to the mobileprofile & CA certificate in the Web UI
-- [ ] backfill requests when new Websocket connection opened
-- [ ] command responses should be separated from event responses.
-- [ ] reorganize code, cleanup of event generation
+- [x] backfill requests when new Websocket connection opened
+- [x] command responses should be separated from event responses.
+- [x] reorganize code, cleanup of event generation
 - [ ] README.md documentation.
 - [ ] variables for connection strings.
 - [ ] better error handling.
 - [ ] **STRETCH** live request interception/hijacking & modification.
-- [ ] Generate custom pdl file with only tabs/domains that we support.
-- [ ] Use embedded version of Devtools UI.
+- [-] Generate custom pdl file with only tabs/domains that we support.
+- [x] Use embedded version of Devtools UI.
 - [ ] Devtools Theme
     - https://chrome.google.com/webstore/detail/devtools-author/egfhcfdfnajldliefpdoaojgahefjhhi
     - https://chrome.google.com/webstore/detail/devtools-theme-zero-dark/bomhdjeadceaggdgfoefmpeafkjhegbo
+- [ ] Move the web container into static content served by the API container.
 
 # License
 

@@ -8,14 +8,14 @@ import (
 	"github.com/analogj/lantern/api/pkg/backend"
 	"github.com/analogj/lantern/common/models"
 	"github.com/chromedp/cdproto"
-	"github.com/chromedp/cdproto/cdp"
-	"github.com/chromedp/cdproto/network"
 	"github.com/jinzhu/gorm"
 	"github.com/lib/pq"
 	"time"
+	"github.com/chromedp/cdproto/network"
+	wsWrapper "github.com/analogj/lantern/api/pkg/models"
 )
 
-func New(toFrontend *chan cdproto.Message, toBackend *chan cdproto.Message, connString string) backend.Interface {
+func New(toFrontend *chan wsWrapper.Wrapper, toBackend *chan wsWrapper.Wrapper, connString string) backend.Interface {
 	e := new(engine)
 	e.toFrontend = *toFrontend
 	e.toBackend = *toBackend
@@ -24,8 +24,8 @@ func New(toFrontend *chan cdproto.Message, toBackend *chan cdproto.Message, conn
 }
 
 type engine struct {
-	toFrontend chan<- cdproto.Message // (send-only) send messages/requests on this channel to frontend clients.
-	toBackend  <-chan cdproto.Message // (listen-only) listen to this channel to retrieve messages from backend.
+	toFrontend chan<- wsWrapper.Wrapper // (send-only) send messages/requests on this channel to frontend clients.
+	toBackend  <-chan wsWrapper.Wrapper // (listen-only) listen to this channel to retrieve messages from backend.
 	connString string
 }
 
@@ -83,7 +83,7 @@ func (e *engine) ListenMessages() {
 
 			// broadcast this event to the websocket.
 			fmt.Println("forwarding parsed event to frontend...")
-			e.toFrontend <- wsEvent
+			e.toFrontend <- wsWrapper.Wrapper{Message: wsEvent}
 
 			if wsEvent.Method == cdproto.EventNetworkResponseReceived {
 				//this is a response, we need to send a couple of additional messages to "finalize" the response.
@@ -94,56 +94,72 @@ func (e *engine) ListenMessages() {
 					continue
 				}
 
-				eventDataReceived := cdproto.Message{
-					Method: cdproto.EventNetworkDataReceived,
-				}
-				timestamp := cdp.MonotonicTime(dbResponse.CreatedAt)
-				dataRecievedPayload := network.EventDataReceived{
-					RequestID:         network.RequestID(fmt.Sprint(dbResponse.RequestId)),
-					Timestamp:         &timestamp,
-					DataLength:        dbResponse.ContentLength,
-					EncodedDataLength: int64(len(dbResponse.Body)),
-				}
-				dataRecievedJsonBytes, err := json.Marshal(dataRecievedPayload)
+				eventDataReceived, err := generateDataReceivedEvent(dbResponse)
 				if err != nil {
 					continue
 				}
-				eventDataReceived.Params = dataRecievedJsonBytes
 
-				eventLoadingFinished := cdproto.Message{
-					Method: cdproto.EventNetworkLoadingFinished,
-				}
-				loadingFinishedPayload := network.EventLoadingFinished{
-					RequestID:         network.RequestID(fmt.Sprint(dbResponse.RequestId)),
-					Timestamp:         &timestamp,
-					EncodedDataLength: float64(len(dbResponse.Body)),
-				}
-				loadingFinishedJsonBytes, err := json.Marshal(loadingFinishedPayload)
+				eventLoadingFinished, err := generateLoadingFinishedEvent(dbResponse)
 				if err != nil {
 					continue
 				}
-				eventLoadingFinished.Params = loadingFinishedJsonBytes
 
-				e.toFrontend <- eventDataReceived
-				e.toFrontend <- eventLoadingFinished
+				e.toFrontend <- wsWrapper.Wrapper{Message: eventDataReceived}
+				e.toFrontend <- wsWrapper.Wrapper{Message: eventLoadingFinished}
 
 			}
 
-		case frontendCmd := <-e.toBackend: //blocking
-			fmt.Println("received websocket command from frontend", frontendCmd)
+		case frontendWrapper := <-e.toBackend:
+			//Message requests forwarded from frontend.
 
-			switch frontendCmd.Method {
+			fmt.Println("received websocket command from frontend", frontendWrapper)
+
+			switch frontendWrapper.Message.Method {
 			case cdproto.CommandNetworkEnable:
-				//TODO: do a database query for requests and responses and forward to frontend.
+				//do a database query for requests and responses to backfill the frontent.
+				requests := []models.DbRequest{}
+				orm.Find(&requests)
 
-				//requests := []models.DbRequest{}
-				//responses := []models.DbResponse{}
-				//
-				//
+				for _, dbReq := range requests {
+					message,  err := generateRequestWillBeSentEvent(dbReq)
+					if err != nil {
+						continue
+					}
+
+					e.toFrontend <- wsWrapper.Wrapper{Message: message, Destination: frontendWrapper.Destination}
+
+					//find associated response
+					dbResp := models.DbResponse{}
+					orm.First(&dbResp, "request_id = ?", dbReq.Id)
+
+
+					eventNetworkResponseReceived, err := generateNetworkResponseReceived(dbReq, dbResp)
+					if err != nil {
+						continue
+					}
+
+					eventDataReceived, err := generateDataReceivedEvent(dbResp)
+					if err != nil {
+						continue
+					}
+
+					eventLoadingFinished, err := generateLoadingFinishedEvent(dbResp)
+					if err != nil {
+						continue
+					}
+
+					e.toFrontend <- wsWrapper.Wrapper{Message: eventNetworkResponseReceived, Destination: frontendWrapper.Destination}
+					e.toFrontend <- wsWrapper.Wrapper{Message: eventDataReceived, Destination: frontendWrapper.Destination}
+					e.toFrontend <- wsWrapper.Wrapper{Message: eventLoadingFinished, Destination: frontendWrapper.Destination}
+				}
+
+
+
+
 
 			case cdproto.CommandNetworkGetResponseBody:
 				params := network.GetResponseBodyParams{}
-				if err := json.Unmarshal(frontendCmd.Params, &params); err != nil {
+				if err := json.Unmarshal(frontendWrapper.Message.Params, &params); err != nil {
 					//TODO:log an error message
 					fmt.Println("An error occured parsing response body request params")
 					continue
@@ -159,15 +175,14 @@ func (e *engine) ListenMessages() {
 
 				if payloadJson, err := payload.MarshalJSON(); err == nil {
 					wsresp := cdproto.Message{
-						ID:     frontendCmd.ID,
+						ID:     frontendWrapper.Message.ID,
 						Result: payloadJson,
 					}
-					e.toFrontend <- wsresp
+					e.toFrontend <- wsWrapper.Wrapper{Destination: frontendWrapper.Destination, Message: wsresp}
 				}
 			}
 		}
 	}
-
 }
 
 func logPayload(payload string) {

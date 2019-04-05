@@ -7,11 +7,12 @@ import (
 	"github.com/gorilla/websocket"
 	"log"
 	"net/http"
+	"github.com/analogj/lantern/api/pkg/models"
 )
 
 // Class constructor.
 
-func New(toFrontend *chan cdproto.Message, toBackend *chan cdproto.Message) frontend.Interface {
+func New(toFrontend *chan models.Wrapper, toBackend *chan models.Wrapper) frontend.Interface {
 	e := new(engine)
 	e.clients = make(map[*websocket.Conn]bool)
 	e.toFrontend = *toFrontend
@@ -27,8 +28,8 @@ var upgrader = websocket.Upgrader{
 }
 
 type engine struct {
-	toFrontend chan cdproto.Message     // (listen & send) listen to this channel for messages to send to connected clients, also directly send responses to this channel
-	toBackend  chan<- cdproto.Message   // (send-only) this is a channel that can be used to send messages/requests to the backend.
+	toFrontend chan models.Wrapper     // (listen & send) listen to this channel for messages to send to connected clients, also directly send responses to this channel
+	toBackend  chan<- models.Wrapper   // (send-only) this is a channel that can be used to send messages/requests to the backend.
 	clients    map[*websocket.Conn]bool // map of long lived connected clients
 }
 
@@ -72,10 +73,10 @@ func (e *engine) RegisterConnection(w http.ResponseWriter, r *http.Request) {
 		//enable specific tabs
 		case cdproto.CommandNetworkEnable:
 			response.Result = []byte("{}")
-			e.toFrontend <- response
+			e.toFrontend <- models.Wrapper{ Message: response }
 			//specifically forward the NetworkEnable command to the backend so that we can trigger a query of the Database
 			// to get existing recordings
-			e.toBackend <- wsCommand
+			e.toBackend <- models.Wrapper{Message: wsCommand, Destination: ws }
 
 		//disable specific features
 		case cdproto.CommandPageEnable,
@@ -84,20 +85,20 @@ func (e *engine) RegisterConnection(w http.ResponseWriter, r *http.Request) {
 			cdproto.CommandNetworkEmulateNetworkConditions,
 			cdproto.CommandEmulationCanEmulate:
 			response.Result = []byte(`{"result":false}`)
-			e.toFrontend <- response
+			e.toFrontend <- models.Wrapper{Message: response}
 
 		//forward some commands to the backend (queries, etc)
 		case cdproto.CommandNetworkGetResponseBody:
-			e.toBackend <- wsCommand
+			e.toBackend <- models.Wrapper{Message: wsCommand, Destination: ws }
 
 		//Fallback, say that we don't support this command.
 		default:
 			respErr := new(cdproto.Error)
 			respErr.Message = fmt.Sprintf("Unsupported command: %v", wsCommand.Method.String())
-			e.toFrontend <- cdproto.Message{
+			e.toFrontend <- models.Wrapper{Message: cdproto.Message{
 				ID:    wsCommand.ID,
 				Error: respErr,
-			}
+			}}
 		}
 	}
 }
@@ -105,18 +106,41 @@ func (e *engine) RegisterConnection(w http.ResponseWriter, r *http.Request) {
 func (e *engine) ListenMessages() {
 	for {
 		// Grab the next message from the toFrontend channel
-		msg := <-e.toFrontend
+		wrapper := <-e.toFrontend
 
-		// Send it out to every client that is currently connected
-		log.Printf("sending frontend msg sent to clients: %v %s %v", msg.ID, msg.Method.String(), string(msg.Result))
-		for client := range e.clients {
-			err := client.WriteJSON(msg)
+		message := wrapper.Message
+		destination := wrapper.Destination
+
+		if wrapper.Destination != nil {
+
+			log.Printf("sending frontend wrapper sent to one client: %v %s %v", message.ID, message.Method.String(), string(message.Result))
+
+			// send the message to only one destination
+			client := wrapper.Destination
+			err := destination.WriteJSON(wrapper.Message)
 
 			if err != nil {
 				log.Printf("error: %v", err)
 				client.Close()
-				delete(e.clients, client)
+				delete(e.clients, destination)
+			}
+		} else {
+			//send message to all clients.
+			// Send it out to every client that is currently connected
+
+			log.Printf("sending frontend wrapper sent to clients: %v %s %v", message.ID, message.Method.String(), string(message.Result))
+			for client := range e.clients {
+				err := client.WriteJSON(wrapper.Message)
+
+				if err != nil {
+					log.Printf("error: %v", err)
+					client.Close()
+					delete(e.clients, client)
+				}
 			}
 		}
+
+
+
 	}
 }
