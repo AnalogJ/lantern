@@ -9,28 +9,46 @@
 
 Peer into your requests.
 
-Lantern is a MITM proxy server that is built in Go and uses
-
 # Introduction
+
+Lantern is an open-source debugging proxy (similar to Fiddler/Charles Proxy) that is written in Go and can be
+hosted on a server. It uses the Chrome DevTools Inspector as a frontend UI, providing developers with a familiar
+interface for inspecting their network traffic.
 
 # Setup
 
 # Usage
+
+```
+docker-compose build
+docker-compose up
+```
+
 
 # TroubleShooting & Useful Tools
 
 
 # TODO:
 
-- [ ] SSL interception
+- [-] SSL interception
+    - [ ] Add links to the mobileprofile & CA certificate in the Web UI
 - [ ] backfill requests when new Websocket connection opened
 - [ ] command responses should be separated from event responses.
-- [ ] fix mimetype retrieval
 - [ ] reorganize code, cleanup of event generation
 - [ ] README.md documentation.
 - [ ] variables for connection strings.
 - [ ] better error handling.
 - [ ] **STRETCH** live request interception/hijacking & modification.
+- [ ] Generate custom pdl file with only tabs/domains that we support.
+- [ ] Use embedded version of Devtools UI.
+- [ ] Devtools Theme
+    - https://chrome.google.com/webstore/detail/devtools-author/egfhcfdfnajldliefpdoaojgahefjhhi
+    - https://chrome.google.com/webstore/detail/devtools-theme-zero-dark/bomhdjeadceaggdgfoefmpeafkjhegbo
+
+# License
+
+# Contributing
+
 
 # References
 
@@ -50,6 +68,12 @@ Lantern is a MITM proxy server that is built in Go and uses
 - https://stackoverflow.com/questions/16727038/how-to-make-mobileconfig-file-on-ios-device
 - https://developer.apple.com/library/archive/documentation/NetworkingInternet/Conceptual/iPhoneOTAConfiguration/Introduction/Introduction.html
 - https://github.com/mritd/strongswan/blob/master/generate-mobileconfig.sh
+- https://github.com/ChromeDevTools/devtools-protocol/tree/master/pdl
+- https://github.com/ChromeDevTools/devtools-frontend
+- https://bit.ly/devtools-contribution-guide
+- https://groups.google.com/forum/#!forum/google-chrome-developer-tools
+- https://twitter.com/DevToolsCommits
+- https://gist.github.com/vbsessa/e337d0add70a71861b8c580d5e16996e
 
 
 ## API/Websockets
@@ -85,5 +109,4 @@ Lantern is a MITM proxy server that is built in Go and uses
 - https://github.com/elazarl/goproxy/issues/9
 - `curl -v -L -x http://localhost:8082 -p  --proxy-insecure -k https://www.example.com`
 
-# License
 

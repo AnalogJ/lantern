@@ -8,6 +8,9 @@ services:
 #    depends_on:
 #      api:
 #        condition: service_healthy
+    volumes:
+      - certs:/srv/lantern/certs
+
 
   api:
     build:
@@ -29,6 +32,8 @@ services:
     depends_on:
       database:
         condition: service_healthy
+    volumes:
+      - certs:/srv/lantern/certs
 
   database:
     image: healthcheck/postgres
@@ -48,6 +53,6 @@ services:
       database:
         condition: service_healthy
 
-#volumes:
-#  certs:
-#    driver: local
+volumes:
+  certs:
+    driver: local

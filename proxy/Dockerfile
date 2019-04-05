@@ -1,6 +1,7 @@
-FROM golang AS build
+FROM golang:alpine AS build
 
-RUN curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+RUN apk add --no-cache curl git \
+    && curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
 
 WORKDIR /go/src/github.com/analogj/lantern/
 
@@ -12,4 +13,24 @@ RUN ls -alt proxy/vendor && cd proxy \
     && go build -o /usr/local/bin/lantern_generator cmd/lantern_generator.go \
     && ls -alt
 
-CMD ["lantern_proxy"]
+###############################################################################
+# Runtime Container
+###############################################################################
+FROM alpine
+
+RUN mkdir -p /srv/lantern/certs
+
+# root filesystem
+COPY proxy/rootfs /
+
+# copy lantern binary
+COPY --from=build /usr/local/bin/lantern_proxy /usr/local/bin/
+
+# s6 overlay
+RUN apk add --no-cache ca-certificates curl openssl \
+ && curl -L -s https://github.com/just-containers/s6-overlay/releases/download/v1.18.1.5/s6-overlay-amd64.tar.gz \
+  | tar xvzf - -C / \
+ && apk del --no-cache curl
+
+
+ENTRYPOINT ["/init"]

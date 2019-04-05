@@ -1,11 +1,14 @@
-FROM python:alpine
+FROM python:2-alpine
 WORKDIR /srv/lantern
 
-RUN apk add curl
-#    && curl -O -L https://github.com/ChromeDevTools/devtools-frontend/archive/master.tar.gz \
-#    && tar -xvf master.tar.gz --strip 1 \
-#    && rm -rf master.tar.gz \
-#    && python scripts/build/code_generator_frontend.py /srv/lantern/inspector/protocol.json --output_js_dir /srv/lantern/front_end \
+# see https://groups.google.com/forum/#!searchin/google-chrome-developer-tools/compile|sort:date/google-chrome-developer-tools/Lh5dgrfJ8c0/ihfnWUUrBQAJ
+
+RUN apk add curl \
+    && curl -O -L https://github.com/ChromeDevTools/devtools-frontend/archive/6bd6d4996c0e1dd424c85540e298338c9aa913ad.tar.gz \
+    && tar -xvf 6bd6d4996c0e1dd424c85540e298338c9aa913ad.tar.gz --strip 1 \
+    && rm -rf 6bd6d4996c0e1dd424c85540e298338c9aa913ad.tar.gz \
+    && curl -o front_end/InspectorBackendCommands.js -L https://chrome-devtools-frontend.appspot.com/serve_file/@38db055e5fc20b2eddca2c829c324fb49de07cbf/InspectorBackendCommands.js \
+    && curl -o front_end/SupportedCSSProperties.js -L https://chrome-devtools-frontend.appspot.com/serve_file/@38db055e5fc20b2eddca2c829c324fb49de07cbf/SupportedCSSProperties.js
 
 COPY index.html index.html
 
