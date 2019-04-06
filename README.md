@@ -84,6 +84,15 @@ If you're interested in intercepting SSL traffic, you'll want to check the [SSL_
 - https://groups.google.com/forum/#!forum/google-chrome-developer-tools
 - https://twitter.com/DevToolsCommits
 - https://gist.github.com/vbsessa/e337d0add70a71861b8c580d5e16996e
+- ```
+    src="https://chrome-devtools-frontend.appspot.com/serve_file/@1c32c539ce0065a41cb79da7bfcd2c71af1afe62/devtools_app.html?ws=localhost:8081/ws"
+    src="https://chrome-devtools-frontend.appspot.com/serve_file/@1c32c539ce0065a41cb79da7bfcd2c71af1afe62/inspector.html?ws=localhost:9000/ws&remoteFrontend=true">
+    src="https://chrome-devtools-frontend.appspot.com/serve_rev/@195284/devtools.html?ws=localhost:9000/ws"
+
+
+    /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --remote-debugging-port=9222 --no-first-run --no-default-browser-check --user-data-dir=$(mktemp -d -t 'chrome-remote_data_dir')
+    /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --user-data-dir=chrome-remote_data_dir
+    ```
 
 
 ## API/Websockets
