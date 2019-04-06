@@ -15,6 +15,7 @@ import (
 	"os"
 	"strings"
 	"time"
+	"github.com/analogj/lantern/proxy/pkg/cert"
 )
 
 func main() {
@@ -32,8 +33,10 @@ func main() {
 	db.LogMode(true)
 	db.SetLogger(log.New(os.Stdout, "\r\n", 0))
 
-	//start proxy server.
+	// set the CA
+	cert.SetCA("/srv/lantern/certs/ca.crt", "/srv/lantern/certs/ca.key.pem")
 
+	//start proxy server.
 	proxy := goproxy.NewProxyHttpServer()
 	proxy.Verbose = *verbose
 	//proxy.OnRequest(goproxy.ReqHostMatches(regexp.MustCompile("^.*$"))).HandleConnect(goproxy.AlwaysReject)

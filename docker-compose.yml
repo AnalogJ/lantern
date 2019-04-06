@@ -2,25 +2,16 @@ version: '2.1'
 
 services:
   web:
-    build: ./web
-    ports:
-    - "8080:8080"
-#    depends_on:
-#      api:
-#        condition: service_healthy
-    volumes:
-      - certs:/srv/lantern/certs
-
-
-  api:
     build:
       context: .
-      dockerfile: ./api/Dockerfile
+      dockerfile: ./web/Dockerfile
     ports:
-    - "8081:9000"
+    - "8080:9000"
     depends_on:
       database:
         condition: service_healthy
+    volumes:
+      - certs:/srv/lantern/certs
 
   proxy:
     build:

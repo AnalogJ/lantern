@@ -1,0 +1,25 @@
+{
+    "extensions": [
+        {
+            "type": "early-initialization",
+            "className": "LanternMain.LanternMain"
+        },
+        {
+            "type": "view",
+            "location": "panel",
+            "id": "node-connection",
+            "title": "Lantern",
+            "order": 0,
+            "className": "LanternMain.LanternPanel",
+            "tags": "node"
+        }
+    ],
+    "dependencies": ["platform", "ui", "host", "components"],
+    "scripts": [
+        "LanternPanel.js",
+        "LanternMain.js"
+    ],
+    "resources": [
+        "nodeConnectionsPanel.css"
+    ]
+}

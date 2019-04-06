@@ -3,10 +3,10 @@ package main
 import (
 	"net/http"
 
-	db "github.com/analogj/lantern/api/pkg/backend/database"
-	ws "github.com/analogj/lantern/api/pkg/frontend/websocket"
+	db "github.com/analogj/lantern/web/pkg/backend/database"
+	ws "github.com/analogj/lantern/web/pkg/frontend/websocket"
 	"log"
-	"github.com/analogj/lantern/api/pkg/models"
+	"github.com/analogj/lantern/web/pkg/models"
 )
 
 var toFrontend = make(chan models.Wrapper ) // send to websocket (frontend)
@@ -21,7 +21,7 @@ func main() {
 	backendEngine := db.New(&toFrontend, &toBackend, "host=database sslmode=disable dbname=lantern user=lantern password=lantern-password")
 
 	// Create a simple file server
-	http.Handle("/", http.FileServer(http.Dir("../public")))
+	http.Handle("/", http.FileServer(http.Dir("/srv/lantern/")))
 	// Configure websocket route
 	http.HandleFunc("/ws", frontendEngine.RegisterConnection)
 

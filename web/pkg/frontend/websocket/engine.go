@@ -2,12 +2,12 @@ package websocket
 
 import (
 	"fmt"
-	"github.com/analogj/lantern/api/pkg/frontend"
+	"github.com/analogj/lantern/web/pkg/frontend"
 	"github.com/chromedp/cdproto"
 	"github.com/gorilla/websocket"
 	"log"
 	"net/http"
-	"github.com/analogj/lantern/api/pkg/models"
+	"github.com/analogj/lantern/web/pkg/models"
 )
 
 // Class constructor.

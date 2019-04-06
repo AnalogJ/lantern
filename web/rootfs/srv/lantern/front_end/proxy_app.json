@@ -1,0 +1,17 @@
+{
+  "modules" : [
+    { "name": "lantern_main", "type": "autostart"},
+    { "name": "inspector_main", "type": "autostart" },
+    { "name": "mobile_throttling", "type": "autostart" },
+
+    { "name": "cookie_table" },
+    { "name": "har_importer" },
+    { "name": "help" },
+
+    { "name": "network" },
+    { "name": "timeline" },
+    { "name": "timeline_model" }
+  ],
+  "extends": "shell",
+  "has_html": true
+}

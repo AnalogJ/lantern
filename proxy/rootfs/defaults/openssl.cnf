@@ -8,32 +8,12 @@ authorityKeyIdentifier=keyid:always,issuer
 basicConstraints = critical,CA:true
 [ req ]
 distinguished_name	= req_distinguished_name
+prompt                 = no
 [ req_distinguished_name ]
-countryName			= Country Name (2 letter code)
-countryName_default		= IL
-countryName_min			= 2
-countryName_max			= 2
-
-stateOrProvinceName		= State or Province Name (full name)
-stateOrProvinceName_default	= Center
-
-localityName			= Locality Name (eg, city)
-localityName_default		= Lod
-
-0.organizationName		= Organization Name (eg, company)
-0.organizationName_default	= GoProxy
-
-# we can do this but it is not needed normally :-)
-#1.organizationName		= Second Organization Name (eg, company)
-#1.organizationName_default	= World Wide Web Pty Ltd
-
-organizationalUnitName		= Organizational Unit Name (eg, section)
-organizationalUnitName_default	= GoProxy
-
-commonName			= Common Name (e.g. server FQDN or YOUR name)
-commonName_default		= goproxy.github.io
-commonName_max			= 64
-
-emailAddress			= Email Address
-emailAddress_default		= elazarl@gmail.com
-emailAddress_max		= 64
+C		= US
+ST	    = California
+L		= San Francisco
+O	    = Lantern
+OU	    = Lantern
+CN		= analogj.github.io
+emailAddress			= jason@thesparktree.com

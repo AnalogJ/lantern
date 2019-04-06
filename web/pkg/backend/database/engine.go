@@ -5,14 +5,14 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"github.com/analogj/lantern/api/pkg/backend"
+	"github.com/analogj/lantern/web/pkg/backend"
 	"github.com/analogj/lantern/common/models"
 	"github.com/chromedp/cdproto"
 	"github.com/jinzhu/gorm"
 	"github.com/lib/pq"
 	"time"
 	"github.com/chromedp/cdproto/network"
-	wsWrapper "github.com/analogj/lantern/api/pkg/models"
+	wsWrapper "github.com/analogj/lantern/web/pkg/models"
 )
 
 func New(toFrontend *chan wsWrapper.Wrapper, toBackend *chan wsWrapper.Wrapper, connString string) backend.Interface {

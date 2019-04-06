@@ -44,7 +44,7 @@ docker-compose up
 - [ ] Devtools Theme
     - https://chrome.google.com/webstore/detail/devtools-author/egfhcfdfnajldliefpdoaojgahefjhhi
     - https://chrome.google.com/webstore/detail/devtools-theme-zero-dark/bomhdjeadceaggdgfoefmpeafkjhegbo
-- [ ] Move the web container into static content served by the API container.
+- [x] Move the web container into static content served by the API container.
 
 # License
 
