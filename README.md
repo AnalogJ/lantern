@@ -2,7 +2,7 @@
 
 <p align="center">
   <a href="https://github.com/AnalogJ/lantern">
-  <img width="300" alt="lexicon_view" src="https://github.com/AnalogJ/lantern/blob/master/logo.svg">
+  <img width="300" alt="lantern logo" src="https://github.com/AnalogJ/lantern/blob/master/logo.svg">
   </a>
 </p>
 
@@ -14,6 +14,22 @@ Peer into your requests.
 Lantern is an open-source debugging proxy (similar to Fiddler/Charles Proxy) that is written in Go and can be
 hosted on a server. It uses the Chrome DevTools Inspector as a frontend UI, providing developers with a familiar
 interface for inspecting their network traffic.
+
+<p align="center">
+  <a href="https://github.com/AnalogJ/lantern">
+  <img height="500" alt="lantern gif" src="https://github.com/AnalogJ/lantern/blob/master/docs/img/screencap.gif">
+  </a>
+</p>
+
+
+# Features
+
+- Familiar Devtools UI
+- SSL/HTTPS Interception
+- Hostable MITM Proxy (run on a server)
+- Request/Responses persist between sessions.
+
+
 
 # Setup
 
