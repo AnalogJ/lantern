@@ -62,7 +62,7 @@ LanternMain.LanternView = class extends UI.VBox {
     link.addEventListener('click', () => InspectorFrontendHost.openInNewTab('https://github.com/analogj/lantern'));
 
     const addButton = UI.createTextButton(
-        Common.UIString('Add connection'), this._addNetworkTargetButtonClicked.bind(this), 'add-network-target-button',
+        Common.UIString('Download CA certificate'), this._downloadCACertificateButtonClicked.bind(this), 'add-network-target-button',
         true /* primary */);
     this.element.appendChild(addButton);
 
@@ -77,7 +77,7 @@ LanternMain.LanternView = class extends UI.VBox {
     this._callback.call(null, config);
   }
 
-  _addNetworkTargetButtonClicked() {
+  _downloadCACertificateButtonClicked() {
     this._list.addNewItem(this._networkDiscoveryConfig.length, {address: '', port: ''});
   }
 

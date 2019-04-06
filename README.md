@@ -111,3 +111,5 @@ docker-compose up
 - `curl -v -L -x http://localhost:8082 -p  --proxy-insecure -k https://www.example.com`
 
 
+## Install Certificates
+- https://knowledge.digicert.com/solution/SO13734.html
