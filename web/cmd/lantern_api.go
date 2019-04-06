@@ -27,7 +27,7 @@ func main() {
 	backendEngine := db.New(&toFrontend, &toBackend, "host=database sslmode=disable dbname=lantern user=lantern password=lantern-password")
 
 	// Create a simple file server
-	http.HandleFunc("/download", DownloadHandler)
+	http.HandleFunc("/certs/ca.crt", DownloadHandler)
 	http.Handle("/", http.FileServer(http.Dir("/srv/lantern/")))
 	// Configure websocket route
 	http.HandleFunc("/ws", frontendEngine.RegisterConnection)
@@ -46,12 +46,8 @@ func main() {
 
 func DownloadHandler(w http.ResponseWriter, r *http.Request) {
 
-	log.Printf("===========REQUESTING PATH: %s", r.RequestURI)
 	file := filepath.Join("/srv/lantern/", r.RequestURI)
-
-	log.Printf("============REQUESTING FILE PATH: %s", file)
-
-
+	
 	downloadBytes, err := ioutil.ReadFile(file)
 
 	if err != nil {
