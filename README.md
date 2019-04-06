@@ -17,12 +17,21 @@ interface for inspecting their network traffic.
 
 # Setup
 
-# Usage
+Lantern is designed to run via Docker, and as such we've created a [`docker-compose.yml`](./docker-compose.yml) file to get you started.
 
 ```
-docker-compose build
 docker-compose up
 ```
+
+After you've started up Lantern, you should open [http://localhost:8080](http://localhost:8080) to view the Lantern UI.
+
+On your test device, you'll want to configure a HTTP proxy, pointing to `http://{{LANTERN_IP_HOST_ADDRESS}}:8081`
+
+If you're interested in intercepting SSL traffic, you'll want to check the [SSL_INTERCEPTION.md](./docs/SSL_INTERCEPTION.md) file in the docs directory.
+
+
+# Usage
+
 
 
 # TroubleShooting & Useful Tools
