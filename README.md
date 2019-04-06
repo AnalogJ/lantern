@@ -24,11 +24,12 @@ interface for inspecting their network traffic.
 
 # Features
 
+- Open Source (MIT License)
 - Familiar Devtools UI
 - SSL/HTTPS Interception
 - Hostable MITM Proxy (run on a server)
 - Request/Responses persist between sessions.
-
+- Dockerized
 
 
 # Setup
@@ -73,8 +74,11 @@ If you're interested in intercepting SSL traffic, you'll want to check the [SSL_
 
 # License
 
+[MIT](./LICENSE)
+
 # Contributing
 
+Please consider contributing by opening a pull request.
 
 # References
 
