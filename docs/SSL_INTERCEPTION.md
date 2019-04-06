@@ -16,7 +16,7 @@
 
 1. Open IE and go to **Tools > Internet Options > Content > Certificates**.
 1. Click **Import**.  A certificate manager Import Wizard will appear.  Click **Next**.
-1. Click **Browse**, select the Trial Root certificate file, and click **Open**.
+1. Click **Browse**, select the Lantern CA certificate file, and click **Open**.
 1. Click **Next** to continue.
 1. Select **Automatically select the certificate store based on the type of the certificate**.  Then click **Next**.
 1. Click **Finish** to complete the installation.
@@ -27,7 +27,7 @@
 1. Open Firefox and go to **Tools > Options**.
 1. Go to **Advanced > Certificates** > click **View Certificates**.
 1. Select the **Authorities** tab.
-1. Click **Import**, select the Trial Root certificate file, and click **Open**.
+1. Click **Import**, select the Lantern CA certificate file, and click **Open**.
 1. Check the box, **Trust this CA to identify websites**.
 1. Click **OK** to complete the installation.
 
@@ -37,7 +37,7 @@
 1. Open Firefox and go to **Firefox > Preferences**.
 1. Go to **Advanced > Certificates** > click **View Certificates**.
 1. Select the **Authorities** tab.
-1. Click **Import**, select the Trial Root certificate file, and click **Open**.
+1. Click **Import**, select the Lantern CA certificate file, and click **Open**.
 1. Check the box, **Trust this CA to identify websites**.
 1. Click **OK** to complete the installation.
 
@@ -48,7 +48,7 @@
 1. Click **Show advanced settings...**
 1. Under the HTTPS/SSL category, click **Manage certificates...**
 1. Click **Import**.  A certificate manager Import Wizard will appear.  Click **Next**.
-1. Click **Browse**, select the Trial Root certificate file, and click **Open**.
+1. Click **Browse**, select the Lantern CA certificate file, and click **Open**.
 1. Click **Next** to continue.
 1. Select **Automatically select the certificate store based on the type of the certificate**.  Then click **Next**.
 1. Click **Finish** to complete the installation.
@@ -62,10 +62,10 @@
 1. A Keychain Access window will appear.  Under Keychains, select **System**.
 1. Under Category, select **Certificates**.
 1. Click the **Plus (+) Icon** at the bottom of the window.
-1. Select the Trial Root certificate file, then click **Open**.
-1. By default, the Trial Root certificate is not trusted.  Double click the certificate to open the information window.
+1. Select the Lantern CA certificate file, then click **Open**.
+1. By default, the Lantern CA certificate is not trusted.  Double click the certificate to open the information window.
 1. Expand the **Trust** menu and under the SSL option, select **Always Trust**.
-1. The Trial Root certificate is now ready for testing Trial SSL certificate connections.
+1. The Lantern CA certificate is now ready for debugging HTTPS network traffic.
 
 
 ## Safari
@@ -74,7 +74,7 @@
 1. Under Keychains, select **System**.
 1. Under Category, select **Certificates**.
 1. Click the **Plus (+) Icon** at the bottom of the window.
-1. Select the Trial Root certificate file, then click **Open**.
-1. By default, the Trial Root certificate is not trusted.  Double click the certificate to open the information window.
+1. Select the Lantern CA certificate file, then click **Open**.
+1. By default, the Lantern CA certificate is not trusted.  Double click the certificate to open the information window.
 1. Expand the **Trust** menu and under the SSL option, select **Always Trust**.
-1. The Trial Root certificate is now ready for testing Trial SSL certificate connections.
+1. The Lantern CA certificate is now ready for debugging HTTPS network traffic.
