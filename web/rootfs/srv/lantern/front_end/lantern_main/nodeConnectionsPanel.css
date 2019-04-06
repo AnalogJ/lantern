@@ -86,6 +86,7 @@
 .network-discovery-view {
     min-width: 400px;
     flex: auto;
+    text-align: center;
 }
 
 .add-network-target-button {
@@ -122,7 +123,7 @@
 
 .node-panel-logo {
     align-self: center;
-    width: 400px;
+    height: 400px;
     margin-bottom: 50px;
     flex: none;
 }

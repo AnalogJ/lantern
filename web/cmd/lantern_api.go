@@ -47,7 +47,7 @@ func main() {
 func DownloadHandler(w http.ResponseWriter, r *http.Request) {
 
 	file := filepath.Join("/srv/lantern/", r.RequestURI)
-	
+
 	downloadBytes, err := ioutil.ReadFile(file)
 
 	if err != nil {

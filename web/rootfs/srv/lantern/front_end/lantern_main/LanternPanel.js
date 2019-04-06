@@ -56,13 +56,13 @@ LanternMain.LanternView = class extends UI.VBox {
 
     const networkDiscoveryFooter = this.element.createChild('div', 'network-discovery-footer');
     networkDiscoveryFooter.createChild('span').textContent =
-        Common.UIString('Peer into your network traffic.');
+        Common.UIString('Peer into your network traffic. ');
     const link = networkDiscoveryFooter.createChild('span', 'link');
     link.textContent = Common.UIString('Learn more');
     link.addEventListener('click', () => InspectorFrontendHost.openInNewTab('https://github.com/analogj/lantern'));
 
     const addButton = UI.createTextButton(
-        Common.UIString('Download CA certificate'), this._downloadCACertificateButtonClicked.bind(this), 'add-network-target-button',
+        Common.UIString('Inspect HTTPS Traffic'), this._downloadCACertificateButtonClicked.bind(this), 'add-network-target-button',
         true /* primary */);
     this.element.appendChild(addButton);
 
@@ -78,7 +78,7 @@ LanternMain.LanternView = class extends UI.VBox {
   }
 
   _downloadCACertificateButtonClicked() {
-    this._list.addNewItem(this._networkDiscoveryConfig.length, {address: '', port: ''});
+      InspectorFrontendHost.openInNewTab('/certs/ca.crt')
   }
 
   /**
