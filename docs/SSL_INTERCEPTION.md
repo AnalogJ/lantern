@@ -1,12 +1,12 @@
 
 # Table of Contents
 
-- [Internet Explorer](#Internet_Explorer)
-- [Firefox for Windows](#Firefox_for_Windows)
-- [Firefox for Mac](#Firefox_for_Mac)
-- [Chrome for Windows](#Chrome_for_Windows)
-- [Chrome for Mac](#Chrome_for_Mac)
-- [Safari](#Safari)
+- [Internet Explorer](#internet-explorer)
+- [Firefox for Windows](#firefox-for-windows)
+- [Firefox for Mac](#firefox-for-mac)
+- [Chrome for Windows](#chrome-for-windows)
+- [Chrome for Mac](#chrome-for-Mac)
+- [Safari](#safari)
 
 
 ---
