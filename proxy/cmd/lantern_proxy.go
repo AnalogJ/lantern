@@ -16,6 +16,7 @@ import (
 	"strings"
 	"time"
 	"github.com/analogj/lantern/proxy/pkg/cert"
+	"net/url"
 )
 
 func main() {
@@ -43,25 +44,23 @@ func main() {
 	proxy.OnRequest().HandleConnect(goproxy.AlwaysMitm)
 	proxy.OnRequest().DoFunc(func(req *http.Request, ctx *goproxy.ProxyCtx) (*http.Request, *http.Response) {
 
-		//log.Printf("printing intercepted request: %v %v\n", req, ctx)
-
-		//jsonBytes, err := json.Marshal(req)
-		//if err == nil {
-		//	//http.Error(w, fmt.Sprint(err), http.StatusInternalServerError)
-		//	log.Printf("========= DUMPED REQUEST: %q", string(jsonBytes))
-		//
-		//} else {
-		//}
-
 		headers := map[string]interface{}{}
 		for k, v := range req.Header {
 			headers[k] = strings.Join(v, ";")
 		}
 
+
+		requestURL, _ := url.Parse(req.URL.String())
+		if req.Host != req.URL.Host {
+			//the requestURL should use the pretty hostname, not the IP address.
+			requestURL.Host = req.Host
+		}
+
+
 		encodedBody, length,  _ := base64EncodedRequestBody(req)
 		dbRequest := models.DbRequest{
 			Method:        req.Method,
-			Url:           req.URL.String(),
+			Url:           requestURL.String(),
 			Headers:       headers,
 			Body:          encodedBody,
 			ContentLength: length,

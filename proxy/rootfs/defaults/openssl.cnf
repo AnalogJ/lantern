@@ -15,5 +15,5 @@ ST	    = California
 L		= San Francisco
 O	    = Lantern
 OU	    = Lantern
-CN		= MITM Lantern Debug Proxy
+CN		= Lantern MITM Root CA
 emailAddress			= jason@thesparktree.com
