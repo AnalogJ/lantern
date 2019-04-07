@@ -58,13 +58,13 @@ func main() {
 			headers[k] = strings.Join(v, ";")
 		}
 
-		encodedBody, _ := base64EncodedRequestBody(req)
+		encodedBody, length,  _ := base64EncodedRequestBody(req)
 		dbRequest := models.DbRequest{
 			Method:        req.Method,
 			Url:           req.URL.String(),
 			Headers:       headers,
 			Body:          encodedBody,
-			ContentLength: req.ContentLength,
+			ContentLength: length,
 			Host:          req.Host,
 			RequestedOn:   time.Now(),
 		}
@@ -92,14 +92,14 @@ func main() {
 			headers[k] = strings.Join(v, ";")
 		}
 
-		encodedBody, mimeType := base64EncodedResponseBody(resp)
+		encodedBody, length, mimeType := base64EncodedResponseBody(resp)
 		dbResponse := models.DbResponse{
 			RequestId:     ctx.UserData.(map[string]uint)["RequestId"],
 			Status:        resp.Status,
 			StatusCode:    resp.StatusCode,
 			Headers:       headers,
 			Body:          encodedBody,
-			ContentLength: resp.ContentLength,
+			ContentLength: length,
 			MimeType:      mimeType,
 			RespondedOn:   time.Now(),
 		}
@@ -116,32 +116,35 @@ func main() {
 	log.Fatal(http.ListenAndServe(*addr, proxy))
 }
 
-func base64EncodedRequestBody(req *http.Request) (string, string) {
+func base64EncodedRequestBody(req *http.Request) (string, int64, string) {
 
 	var bodyBytes []byte
 	if req.Body != nil {
 		bodyBytes, _ = ioutil.ReadAll(req.Body)
+
+		// Restore the io.ReadCloser to its original state
+		req.Body = ioutil.NopCloser(bytes.NewBuffer(bodyBytes))
 	}
-	// Restore the io.ReadCloser to its original state
-	req.Body = ioutil.NopCloser(bytes.NewBuffer(bodyBytes))
+
 	// Use the content
 
 	mimeType := http.DetectContentType(bodyBytes)
 
-	return base64.StdEncoding.EncodeToString(bodyBytes), mimeType
+	return base64.StdEncoding.EncodeToString(bodyBytes), int64(len(bodyBytes)), mimeType
 }
 
-func base64EncodedResponseBody(resp *http.Response) (string, string) {
+func base64EncodedResponseBody(resp *http.Response) (string, int64, string) {
 
 	var bodyBytes []byte
 	if resp.Body != nil {
 		bodyBytes, _ = ioutil.ReadAll(resp.Body)
-	}
-	// Restore the io.ReadCloser to its original state
-	resp.Body = ioutil.NopCloser(bytes.NewBuffer(bodyBytes))
-	// Use the content
 
+		// Restore the io.ReadCloser to its original state
+		resp.Body = ioutil.NopCloser(bytes.NewBuffer(bodyBytes))
+	}
+
+	// Use the content
 	mimeType := http.DetectContentType(bodyBytes)
 
-	return base64.StdEncoding.EncodeToString(bodyBytes), mimeType
+	return base64.StdEncoding.EncodeToString(bodyBytes), int64(len(bodyBytes)), mimeType
 }

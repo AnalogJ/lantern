@@ -2,9 +2,10 @@ version: '2.1'
 
 services:
   web:
-    build:
-      context: .
-      dockerfile: ./web/Dockerfile
+    image: analogj/lantern:web
+#    build:
+#      context: .
+#      dockerfile: ./web/Dockerfile
     ports:
     - "8080:9000"
     depends_on:
@@ -14,9 +15,10 @@ services:
       - certs:/srv/lantern/certs
 
   proxy:
-    build:
-      context: .
-      dockerfile: ./proxy/Dockerfile
+    image: analogj/lantern:proxy
+#    build:
+#      context: .
+#      dockerfile: ./proxy/Dockerfile
     ports:
     - "8081:9000"
 #    command: 'lantern_generator' # lantern_proxy default
@@ -38,6 +40,8 @@ services:
 
   admin-database:
     image: adminer
+    environment:
+    - ADMINER_DEFAULT_SERVER=database
     ports:
     - "5050:8080"
     depends_on:

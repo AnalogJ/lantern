@@ -9,6 +9,7 @@ import (
 	"github.com/chromedp/cdproto/cdp"
 	"github.com/chromedp/cdproto/network"
 	"github.com/jinzhu/gorm"
+	"github.com/chromedp/cdproto/security"
 )
 
 
@@ -121,6 +122,10 @@ func generateRequestWillBeSentEvent(dbRequest models.DbRequest) (cdproto.Message
 		Timestamp: &timestamp, // Timestamp.
 		WallTime:  &walltime,  // Timestamp.
 		Initiator: &initiator, // Request initiator.
+		//RedirectResponse *Response           `json:"redirectResponse,omitempty"` // Redirect response data.
+		Type: network.ResourceTypeOther,       //`json:"type,omitempty"`             // Type of this resource.
+		//FrameID          cdp.FrameID         `json:"frameId,omitempty"`          // Frame identifier.
+		//HasUserGesture   bool                `json:"hasUserGesture,omitempty"`   // Whether the request is initiated by a user gesture. Defaults to false.
 	}
 
 	jsonBytes, err := json.Marshal(payload)
@@ -169,12 +174,15 @@ func generateNetworkResponseReceived(dbRequest models.DbRequest, dbResponse mode
 			//ConnectionID       float64          `json:"connectionId"`                 // Physical connection id that was actually used for this request.
 			//RemoteIPAddress    string           `json:"remoteIPAddress,omitempty"`    // Remote IP address.
 			//RemotePort         int64            `json:"remotePort,omitempty"`         // Remote port.
-			//FromDiskCache      bool             `json:"fromDiskCache,omitempty"`      // Specifies that the request was served from the disk cache.
-			//FromServiceWorker  bool             `json:"fromServiceWorker,omitempty"`  // Specifies that the request was served from the ServiceWorker.
+			FromDiskCache: false,     // Specifies that the request was served from the disk cache.
+			FromServiceWorker: false, // Specifies that the request was served from the ServiceWorker.
 			EncodedDataLength: float64(len(dbResponse.Body)), // Total number of bytes received for this request so far.
-			//Timing:             *ResourceTiming  `json:"timing,omitempty"`             // Timing information for the given request.
+			//Timing:             &network.ResourceTiming{
+			//	RequestTime: float64(dbRequest.RequestedOn.Unix()),
+			//
+			//},          // Timing information for the given request.
 			//Protocol           string           `json:"protocol,omitempty"`           // Protocol used to fetch this request.
-			//SecurityState      security.State   `json:"securityState"`                // Security state of the request resource.
+			SecurityState:      security.StateUnknown,                // Security state of the request resource.
 			//SecurityDetails    *SecurityDetails `json:"securityDetails,omitempty"`    // Security details for the request.
 		},
 	}
