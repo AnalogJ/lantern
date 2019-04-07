@@ -1,11 +1,15 @@
-# lantern
-
 <p align="center">
   <a href="https://github.com/AnalogJ/lantern">
-  <img width="300" alt="lantern logo" src="https://github.com/AnalogJ/lantern/blob/master/logo.svg">
+  <img height="400" alt="lantern logo" src="https://github.com/AnalogJ/lantern/blob/master/logo.svg">
   </a>
 </p>
 
+# Lantern
+
+[![Build Status](https://travis-ci.org/analogj/lantern.svg?branch=master)](https://travis-ci.org/analogj/lantern)
+[![Docker Pulls](https://img.shields.io/docker/pulls/analogj/lantern.svg)](https://hub.docker.com/r/analogj/lantern)
+[![Docker Stars](https://img.shields.io/docker/stars/analogj/lantern.svg)](https://hub.docker.com/r/analogj/lantern)
+[![Docker Layers](https://images.microbadger.com/badges/image/analogj/lantern.svg)](https://microbadger.com/images/analogj/lantern)
 
 Peer into your requests.
 
