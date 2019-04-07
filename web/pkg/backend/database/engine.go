@@ -180,7 +180,31 @@ func (e *engine) ListenMessages() {
 					}
 					e.toFrontend <- wsWrapper.Wrapper{Destination: frontendWrapper.Destination, Message: wsresp}
 				}
+			case cdproto.CommandNetworkGetRequestPostData:
+
+				params := network.GetRequestPostDataParams{}
+				if err := json.Unmarshal(frontendWrapper.Message.Params, &params); err != nil {
+					//TODO:log an error message
+					fmt.Println("An error occured parsing request post data request params")
+					continue
+				}
+				dbreq := models.DbRequest{}
+				orm.First(&dbreq, "id = ?", params.RequestID)
+
+				fmt.Println("Found ")
+				payload := network.GetRequestPostDataReturns{
+					PostData:          dbreq.Body,
+				}
+
+				if payloadJson, err := payload.MarshalJSON(); err == nil {
+					wsresp := cdproto.Message{
+						ID:     frontendWrapper.Message.ID,
+						Result: payloadJson,
+					}
+					e.toFrontend <- wsWrapper.Wrapper{Destination: frontendWrapper.Destination, Message: wsresp}
+				}
 			}
+
 		}
 	}
 }

@@ -13,6 +13,7 @@ type DbResponse struct {
 	Body          string                 `gorm:"NOT NULL" mapstructure:"body"`
 	ContentLength int64                  `gorm:"NOT NULL" mapstructure:"content_length"`
 	MimeType      string                 `gorm:"type:varchar(50);NOT NULL" mapstructure:"mime_type"`
+	Protocol      string				 `gorm:"type:varchar(50);NOT NULL" mapstructure:"protocol"`
 	RespondedOn   time.Time              `gorm:"NOT NULL" mapstructure:"responded_on"`
 	CreatedAt     time.Time              `gorm:"NOT NULL" mapstructure:"created_at"`
 }

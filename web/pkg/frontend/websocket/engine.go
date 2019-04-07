@@ -88,7 +88,8 @@ func (e *engine) RegisterConnection(w http.ResponseWriter, r *http.Request) {
 			e.toFrontend <- models.Wrapper{Message: response}
 
 		//forward some commands to the backend (queries, etc)
-		case cdproto.CommandNetworkGetResponseBody:
+		case cdproto.CommandNetworkGetResponseBody,
+			cdproto.CommandNetworkGetRequestPostData:
 			e.toBackend <- models.Wrapper{Message: wsCommand, Destination: ws }
 
 		//Fallback, say that we don't support this command.

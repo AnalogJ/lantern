@@ -75,6 +75,7 @@ If you're interested in intercepting SSL traffic, you'll want to check the [SSL_
     - https://chrome.google.com/webstore/detail/devtools-author/egfhcfdfnajldliefpdoaojgahefjhhi
     - https://chrome.google.com/webstore/detail/devtools-theme-zero-dark/bomhdjeadceaggdgfoefmpeafkjhegbo
 - [x] Move the web container into static content served by the API container.
+- [ ] Add support for HAR archive.
 
 # License
 

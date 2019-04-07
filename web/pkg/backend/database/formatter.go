@@ -181,7 +181,7 @@ func generateNetworkResponseReceived(dbRequest models.DbRequest, dbResponse mode
 			//	RequestTime: float64(dbRequest.RequestedOn.Unix()),
 			//
 			//},          // Timing information for the given request.
-			//Protocol           string           `json:"protocol,omitempty"`           // Protocol used to fetch this request.
+			Protocol: dbResponse.Protocol,           // Protocol used to fetch this request.
 			SecurityState:      security.StateUnknown,                // Security state of the request resource.
 			//SecurityDetails    *SecurityDetails `json:"securityDetails,omitempty"`    // Security details for the request.
 		},

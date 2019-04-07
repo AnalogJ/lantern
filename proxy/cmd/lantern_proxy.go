@@ -56,7 +56,6 @@ func main() {
 			requestURL.Host = req.Host
 		}
 
-
 		encodedBody, length,  _ := base64EncodedRequestBody(req)
 		dbRequest := models.DbRequest{
 			Method:        req.Method,
@@ -100,6 +99,7 @@ func main() {
 			Body:          encodedBody,
 			ContentLength: length,
 			MimeType:      mimeType,
+			Protocol:	   resp.Proto,
 			RespondedOn:   time.Now(),
 		}
 

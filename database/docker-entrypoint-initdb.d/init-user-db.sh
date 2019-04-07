@@ -60,6 +60,7 @@ CREATE TABLE responses
   body          TEXT NOT NULL,
   content_length BIGINT NOT NULL,
   mime_type     VARCHAR (50) NULL,
+  protocol VARCHAR (50) NULL,
 
   responded_on TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
