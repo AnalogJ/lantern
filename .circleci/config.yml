@@ -14,7 +14,12 @@ jobs:
       - run: curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
 
       # install dependencies
-      - run: dep ensure
+      - run: cd proxy && dep ensure
+      - run: cd web && dep ensure
+
+      # build binaries
+      - run: cd proxy && dep ensure
+      - run: cd web && dep ensure
 
 #      - run:
 #          name: Run unit tests
@@ -36,7 +41,8 @@ jobs:
       - save_cache:
           key: v1-pkg-cache
           paths:
-            - "/go/src/github.com/analogj/lantern/vendor"
+            - "/go/src/github.com/analogj/lantern/proxy/vendor"
+            - "/go/src/github.com/analogj/lantern/web/vendor"
 
 #      - run:
 #          name: Merge coverage reports and submit
