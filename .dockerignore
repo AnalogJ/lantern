@@ -91,3 +91,4 @@ fabric.properties
 
 database
 docs
+.circleci
