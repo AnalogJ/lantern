@@ -18,8 +18,8 @@ jobs:
       - run: cd web && dep ensure
 
       # build binaries
-      - run: cd proxy && dep ensure
-      - run: cd web && dep ensure
+      - run: cd proxy && dep ensure && go build cmd/lantern_proxy.go
+      - run: cd web && dep ensure && go build cmd/lantern_api.go
 
 #      - run:
 #          name: Run unit tests
