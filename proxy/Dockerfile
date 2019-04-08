@@ -10,7 +10,7 @@ COPY . .
 RUN cd proxy \
     && dep ensure \
     && go build -o /usr/local/bin/lantern_proxy cmd/lantern_proxy.go \
-    && go build -o /usr/local/bin/lantern_generator cmd/lantern_generator.go \
+    && go build -o /usr/local/bin/lantern_mobileconfig cmd/lantern_mobileconfig.go \
     && ls -alt
 
 ###############################################################################
@@ -25,6 +25,7 @@ COPY proxy/rootfs /
 
 # copy lantern binary
 COPY --from=build /usr/local/bin/lantern_proxy /usr/local/bin/
+COPY --from=build /usr/local/bin/lantern_mobileconfig /usr/local/bin/
 
 # s6 overlay
 RUN apk add --no-cache ca-certificates curl openssl \

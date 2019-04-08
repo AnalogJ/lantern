@@ -1,0 +1,51 @@
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>ConsentText</key>
+	<dict>
+		<key>default</key>
+		<string>WARNING: This profile will install the Lantern MITM Root CA. It will intercept and decode all HTTPS traffic. This profile will automatically uninstall after 1 day. </string>
+	</dict>
+	<key>DurationUntilRemoval</key>
+	<integer>86400</integer>
+	<key>PayloadContent</key>
+	<array>
+		<dict>
+			<key>PayloadCertificateFileName</key>
+			<string>ca.crt</string>
+			<key>PayloadContent</key>
+			<data>
+			{{ .CertificateBase64}}
+			</data>
+			<key>PayloadDescription</key>
+			<string>Adds a CA root certificate</string>
+			<key>PayloadDisplayName</key>
+			<string>Lantern MITM Root CA</string>
+			<key>PayloadIdentifier</key>
+			<string>com.apple.security.root.00D9E7A8-3A30-4481-AA9D-61691824FDD1</string>
+			<key>PayloadType</key>
+			<string>com.apple.security.root</string>
+			<key>PayloadUUID</key>
+			<string>00D9E7A8-3A30-4481-AA9D-61691824FDD1</string>
+			<key>PayloadVersion</key>
+			<integer>1</integer>
+		</dict>
+	</array>
+	<key>PayloadDescription</key>
+	<string>This profile installs the Lantern MITM Root CA</string>
+	<key>PayloadDisplayName</key>
+	<string>Lantern MITM Root CA</string>
+	<key>PayloadIdentifier</key>
+	<string>Lantern.D80D964F-5AAB-4B7C-9212-28AA155241F9</string>
+	<key>PayloadOrganization</key>
+	<string>Lantern</string>
+	<key>PayloadRemovalDisallowed</key>
+	<false/>
+	<key>PayloadType</key>
+	<string>Configuration</string>
+	<key>PayloadUUID</key>
+	<string>38267341-1170-4036-A019-701B5725EF85</string>
+	<key>PayloadVersion</key>
+	<integer>1</integer>
+</dict>
+</plist>
