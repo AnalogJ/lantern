@@ -18,7 +18,7 @@ type Data struct {
 func main() {
 	//parse flags
 	caCertPath := flag.String("ca-path", "/srv/lantern/certs/ca.crt", "Path to CA file to embed in mobileconfig")
-	mobileConfigPath := flag.String("mobileconfig-path", "/srv/lantern/lantern.mobileconfig", "Path to mobileconfig file to generate")
+	mobileConfigPath := flag.String("mobileconfig-path", "/srv/lantern/certs/lantern.mobileconfig", "Path to mobileconfig file to generate")
 	flag.Parse()
 
 	templateContent, err := ioutil.ReadFile("/defaults/lantern.mobileconfig.tmpl")

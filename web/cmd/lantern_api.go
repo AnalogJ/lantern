@@ -28,7 +28,7 @@ func main() {
 
 	// Create a simple file server
 	http.HandleFunc("/certs/ca.crt", DownloadHandler)
-	http.HandleFunc("/lantern.mobileconfig", DownloadHandler)
+	http.HandleFunc("/certs/lantern.mobileconfig", DownloadHandler)
 
 	http.Handle("/", http.FileServer(http.Dir("/srv/lantern/")))
 	// Configure websocket route
