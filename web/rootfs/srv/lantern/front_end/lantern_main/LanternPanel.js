@@ -21,11 +21,8 @@ LanternMain.LanternPanel = class extends UI.Panel {
     this.setDefaultFocusedElement(this.contentElement);
 
 
-    this._networkDiscoveryView = new LanternMain.LanternView(config => {
-      this._config.networkDiscoveryConfig = config;
-      InspectorFrontendHost.setDevicesDiscoveryConfig(this._config);
-    });
-    this._networkDiscoveryView.show(container);
+    this._lanternView = new LanternMain.LanternView();
+    this._lanternView.show(container);
   }
 };
 
@@ -33,9 +30,7 @@ LanternMain.LanternPanel = class extends UI.Panel {
  * @implements {UI.ListWidget.Delegate<Adb.PortForwardingRule>}
  */
 LanternMain.LanternView = class extends UI.VBox {
-  /**
-   * @param {function(!Adb.NetworkDiscoveryConfig)} callback
-   */
+
   constructor(callback) {
     super();
     this._callback = callback;
