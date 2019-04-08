@@ -34,7 +34,7 @@ interface for inspecting their network traffic.
 - Hostable MITM Proxy (run on a server)
 - Request/Responses persist between sessions.
 - Dockerized
-
+- Generates a `.mobileconfig` file for use with macOS and iOS
 
 # Setup
 
@@ -60,12 +60,12 @@ If you're interested in intercepting SSL traffic, you'll want to check the [SSL_
 
 # TODO:
 
-- [-] SSL interception
-    - [ ] Add links to the mobileprofile & CA certificate in the Web UI
+- [x] SSL interception
+    - [x] Add links to the mobileprofile & CA certificate in the Web UI
 - [x] backfill requests when new Websocket connection opened
 - [x] command responses should be separated from event responses.
 - [x] reorganize code, cleanup of event generation
-- [ ] README.md documentation.
+- [-] README.md documentation.
 - [ ] variables for connection strings.
 - [ ] better error handling.
 - [ ] **STRETCH** live request interception/hijacking & modification.
