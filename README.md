@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://github.com/AnalogJ/lantern">
-  <img height="400" alt="lantern logo" src="https://github.com/AnalogJ/lantern/blob/master/logo.svg">
+  <img height="400" alt="lantern logo" src="https://github.com/AnalogJ/lantern/blob/master/logo-dark.svg">
   </a>
 </p>
 
