@@ -60,24 +60,35 @@ If you're interested in intercepting SSL traffic, you'll want to check the [SSL_
 
 # TODO:
 
-- [x] SSL interception
+- Documentation
+    - [-] README.md documentation.
+- Proxy Code
+    - [x] SSL interception
+    - [ ] better error handling.
+    - [ ] **STRETCH** live request interception/hijacking & modification.
+- Frontend/Websocket Code
     - [x] Add links to the mobileprofile & CA certificate in the Web UI
-- [x] backfill requests when new Websocket connection opened
-- [x] command responses should be separated from event responses.
-- [x] reorganize code, cleanup of event generation
-- [-] README.md documentation.
-- [ ] variables for connection strings.
-- [ ] better error handling.
-- [ ] **STRETCH** live request interception/hijacking & modification.
-- [-] Generate custom pdl file with only tabs/domains that we support.
-- [x] Use embedded version of Devtools UI.
-- [ ] Devtools Theme
-    - https://chrome.google.com/webstore/detail/devtools-author/egfhcfdfnajldliefpdoaojgahefjhhi
-    - https://chrome.google.com/webstore/detail/devtools-theme-zero-dark/bomhdjeadceaggdgfoefmpeafkjhegbo
-- [x] Move the web container into static content served by the API container.
-- [ ] Add support for HAR archive.
-- [ ] Ability to delete/remove recordings (without wiping the DB)
-- [ ]
+    - [x] backfill requests when new Websocket connection opened
+    - [x] command responses should be separated from event responses.
+    - [x] reorganize code, cleanup of event generation
+    - [x] Use embedded version of Devtools UI.
+    - [ ] Add support for HAR archive.
+    - [ ] variables for connection strings.
+    - [ ] better error handling.
+    - [ ] Ability to delete/remove recordings (without wiping the DB)
+    - [-] Hide tabs that we do not support
+        - https://github.com/ChromeDevTools/devtools-frontend/blob/master/front_end/ui/View.js#L798-L806
+        - ```
+          var viewid = UI.viewManager._views.get('network').viewId()
+
+          UI.viewManager._views.delete(viewid)
+          UI.inspectorView._tabbedPane.closeTab(viewid)
+
+          ```
+    - [ ] Devtools Theme
+        - https://chrome.google.com/webstore/detail/devtools-author/egfhcfdfnajldliefpdoaojgahefjhhi
+        - https://chrome.google.com/webstore/detail/devtools-theme-zero-dark/bomhdjeadceaggdgfoefmpeafkjhegbo
+    - [ ] **STRETCH** live request interception/hijacking & modification.
 
 
 # License

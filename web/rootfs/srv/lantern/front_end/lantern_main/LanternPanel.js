@@ -2,6 +2,17 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// function removePanel(view){
+//     if (!UI.inspectorView._tabbedPane.hasTab(view.viewId()))
+//         return;
+//
+//     delete view[UI.ViewManager._Location.symbol];
+//     UI.viewManager._views.delete(view.viewId());
+//     UI.inspectorView._tabbedPane.closeTab(view.viewId());
+//     // this._views.delete(view.viewId());
+// }
+
+
 LanternMain.LanternPanel = class extends UI.Panel {
   constructor() {
     super('node-connection');
