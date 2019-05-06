@@ -6,7 +6,7 @@
 
 # Lantern
 
-[![Build Status](https://travis-ci.org/analogj/lantern.svg?branch=master)](https://travis-ci.org/analogj/lantern)
+[![CircleCI](https://circleci.com/gh/AnalogJ/lantern.svg?style=svg)](https://circleci.com/gh/AnalogJ/lantern)
 [![Docker Pulls](https://img.shields.io/docker/pulls/analogj/lantern.svg)](https://hub.docker.com/r/analogj/lantern)
 [![Docker Stars](https://img.shields.io/docker/stars/analogj/lantern.svg)](https://hub.docker.com/r/analogj/lantern)
 [![Docker Layers](https://images.microbadger.com/badges/image/analogj/lantern.svg)](https://microbadger.com/images/analogj/lantern)
