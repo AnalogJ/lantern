@@ -44,16 +44,22 @@ Lantern is designed to run via Docker, and as such we've created a [`docker-comp
 docker-compose up
 ```
 
-After you've started up Lantern, you should open [http://localhost:8080](http://localhost:8080) to view the Lantern UI.
-
-On your test device, you'll want to configure a HTTP proxy, pointing to `http://{{LANTERN_IP_HOST_ADDRESS}}:8081`
-
-If you're interested in intercepting SSL traffic, you'll want to check the [SSL_INTERCEPTION.md](./docs/SSL_INTERCEPTION.md) file in the docs directory.
-
-
 # Usage
 
+After you've started up Lantern, there are 3 important URL's you'll want to be familiar with:
 
+- [http://localhost:8080](http://localhost:8080) is the URL for the Lantern WebUI. From here you can view any request/response that are sent through the proxy
+- [http://localhost:8081](http://localhost:8081) is the HTTP Proxy URL. On your test device, you'll want to configure a HTTP proxy. In a standard deployment, this will usually be assigned to a easy-to-remember URL that you can enter into your various devices: `http://proxy.corp.example.com:8081`
+- [http://localhost:5050](http://localhost:5050) is the URL for the (optional) Database Admin UI. From here you can view the content of the Lantern DB, where network traffic is stored.
+    - **database name:** lantern
+    - **username:** lantern
+    - **password**: lantern-password
+
+Here's a quick test you can run to ensure that everything is working correctly:
+
+`curl -k -x localhost:8081 https://www.google.com`
+
+Please note, the `-k` flag forces curl to ignore SSL certificates. If you're interested in intercepting SSL traffic (and removing the `-k` flag), you'll want to check the [SSL_INTERCEPTION.md](./docs/SSL_INTERCEPTION.md) file in the docs directory.
 
 # TroubleShooting & Useful Tools
 
@@ -76,6 +82,10 @@ If you're interested in intercepting SSL traffic, you'll want to check the [SSL_
     - [ ] variables for connection strings.
     - [ ] better error handling.
     - [ ] Ability to delete/remove recordings (without wiping the DB)
+        - ```
+        UI.panels.network._networkLogView._dataGrid.setRowContextMenuCallback(console.log)
+
+        ```
     - [-] Hide tabs that we do not support
         - https://github.com/ChromeDevTools/devtools-frontend/blob/master/front_end/ui/View.js#L798-L806
         - ```
